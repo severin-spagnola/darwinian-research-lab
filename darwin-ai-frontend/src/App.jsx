@@ -17,7 +17,7 @@ import useEvolutionPlayback from './hooks/useEvolutionPlayback.js'
 import { generateEvolutionRun } from './data/mockDataGenerator.js'
 import {
   listRuns,
-  getRunSummary,
+  getRunPlayback,
   getRunLLMUsage,
 } from './api/client.js'
 
@@ -144,7 +144,7 @@ export default function App() {
           throw lastErr ?? new Error('Timed out')
         }
 
-        const summary = await poll(() => getRunSummary(selectedRunId), {
+        const playbackData = await poll(() => getRunPlayback(selectedRunId), {
           maxAttempts: 60,
           delayMs: 2000,
         })
@@ -155,7 +155,7 @@ export default function App() {
         }).catch(() => null)
 
         if (cancelled) return
-        setRealRunData(summary)
+        setRealRunData(playbackData)
         setRealLlmUsage(usage)
         setIsLoadingRun(false)
       } catch (err) {

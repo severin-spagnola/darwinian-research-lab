@@ -54,6 +54,14 @@ export async function getRunSummary(runId) {
 }
 
 /**
+ * Get run data in playback-compatible format (generations array)
+ * GET /api/runs/{runId}/playback
+ */
+export async function getRunPlayback(runId) {
+  return apiFetch(`/api/runs/${runId}/playback`)
+}
+
+/**
  * Start a new evolution run
  * POST /api/run
  */

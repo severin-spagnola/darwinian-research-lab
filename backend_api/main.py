@@ -324,6 +324,144 @@ async def get_run(run_id: str):
     return result
 
 
+@app.get("/api/runs/{run_id}/playback")
+async def get_run_playback(run_id: str):
+    """Return run data in the frontend playback format.
+
+    Reconstructs the {generations, lineage} structure the frontend
+    useEvolutionPlayback hook expects from stored graphs + evals.
+    """
+    run_dir = config.RESULTS_DIR / "runs" / run_id
+    if not run_dir.exists():
+        raise HTTPException(status_code=404, detail="Run not found")
+
+    graphs_dir = run_dir / "graphs"
+    evals_dir = run_dir / "evals"
+    summary_file = run_dir / "summary.json"
+
+    # Load all graphs and evals
+    strategies = []
+    if graphs_dir.exists():
+        for gf in sorted(graphs_dir.glob("*.json")):
+            graph_id = gf.stem
+            graph = json.loads(gf.read_text())
+
+            # Load matching eval
+            eval_file = evals_dir / f"{graph_id}.json"
+            eval_data = json.loads(eval_file.read_text()) if eval_file.exists() else {}
+
+            # Determine state from eval decision
+            decision = eval_data.get("decision", "survive")
+            if decision == "survive":
+                state = "alive"
+            elif decision == "kill":
+                state = "dead"
+            else:
+                state = "alive"
+
+            # Build results in mock-compatible format
+            val_report = eval_data.get("validation_report", {})
+            fitness = eval_data.get("fitness", val_report.get("fitness", 0))
+            train = val_report.get("train_metrics", {})
+            holdout = val_report.get("holdout_metrics", {})
+            penalties = val_report.get("penalties", {})
+            failures = val_report.get("failure_labels", [])
+
+            results = {
+                "phase3": {
+                    "aggregated_fitness": fitness,
+                    "median_fitness": fitness,
+                    "penalties": penalties,
+                    "regime_coverage": {
+                        "unique_regimes": 1,
+                        "years_covered": 0.33,
+                        "per_regime_fitness": {},
+                    },
+                    "episodes": [
+                        {
+                            "label": "full_period",
+                            "start_ts": graph.get("time", {}).get("date_range", {}).get("start", "2024-10-01"),
+                            "fitness": fitness,
+                            "tags": {
+                                "trend": "bull" if holdout.get("return_pct", 0) > 0 else "bear",
+                                "vol_bucket": "medium",
+                                "chop_bucket": "medium",
+                                "drawdown_state": "normal",
+                            },
+                            "difficulty": 0.5,
+                            "debug_stats": {
+                                "return_pct": holdout.get("return_pct", 0),
+                                "sharpe": holdout.get("sharpe", 0),
+                                "max_dd_pct": holdout.get("max_dd_pct", 0),
+                                "trades": holdout.get("trades", 0),
+                                "win_rate": holdout.get("win_rate", 0),
+                            },
+                        }
+                    ],
+                },
+                "red_verdict": {
+                    "verdict": "SURVIVE" if decision == "survive" else "KILL",
+                    "failures": failures,
+                    "next_action": "breed" if decision == "survive" else "discard",
+                },
+                "fitness": fitness,
+            }
+
+            # Ensure graph has metadata.generation
+            if "metadata" not in graph:
+                graph["metadata"] = {}
+            if "generation" not in graph["metadata"]:
+                graph["metadata"]["generation"] = 0
+
+            strategies.append({
+                "id": graph.get("graph_id", graph_id),
+                "graph": graph,
+                "results": results,
+                "state": state,
+            })
+
+    # Mark top strategy as elite
+    if strategies:
+        strategies.sort(key=lambda s: s["results"].get("fitness", 0), reverse=True)
+        strategies[0]["state"] = "elite"
+
+    # Build generations array (group by metadata.generation)
+    gen_map = {}
+    for s in strategies:
+        gen = s["graph"].get("metadata", {}).get("generation", 0)
+        gen_map.setdefault(gen, []).append(s)
+
+    max_gen = max(gen_map.keys()) if gen_map else 0
+    generations = [gen_map.get(g, []) for g in range(max_gen + 1)]
+
+    # Build lineage
+    lineage = {"roots": [], "edges": []}
+    for s in strategies:
+        parent = s["graph"].get("metadata", {}).get("parent_graph")
+        if parent:
+            lineage["edges"].append({"parent": parent, "child": s["id"]})
+        else:
+            lineage["roots"].append(s["id"])
+
+    # Load summary for stats
+    summary = {}
+    if summary_file.exists():
+        summary = json.loads(summary_file.read_text())
+
+    return {
+        "run_id": run_id,
+        "generations": generations,
+        "lineage": lineage,
+        "champion": strategies[0] if strategies else None,
+        "stats": {
+            "total_strategies": len(strategies),
+            "total_survivors": sum(1 for s in strategies if s["state"] in ("alive", "elite")),
+            "survival_rate": sum(1 for s in strategies if s["state"] in ("alive", "elite")) / max(len(strategies), 1),
+            "best_fitness": summary.get("best_fitness", 0),
+        },
+    }
+
+
 @app.get("/api/runs/{run_id}/lineage")
 async def get_lineage(run_id: str):
     """Get lineage for a run."""
