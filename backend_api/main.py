@@ -56,15 +56,10 @@ def _record_error(entry: Dict[str, Any]):
 app = FastAPI(title="Darwin Evolution API", version="1.0.0")
 
 # CORS middleware for local development and production
+# Use allow_origin_regex for wildcard Vercel domains
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:5173",
-        # Vercel production domains
-        "https://darwinian-research-kysnor6yn-severin-spagnolas-projects.vercel.app",
-        "https://*.vercel.app",  # Allow all Vercel preview deployments
-    ],
+    allow_origin_regex=r"https://.*\.vercel\.app|http://localhost:\d+",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
