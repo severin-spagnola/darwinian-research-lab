@@ -382,6 +382,9 @@ class BacktestSimulator:
         # Get timestamps (handle both column and index formats)
         if 'timestamp' in data.columns:
             timestamps = data['timestamp']
+            start_ts = pd.to_datetime(timestamps.iloc[0])
+            end_ts = pd.to_datetime(timestamps.iloc[-1])
+            delta_ts = pd.to_datetime(timestamps.iloc[1]) - start_ts if len(timestamps) > 1 else pd.Timedelta(minutes=5)
         elif isinstance(data.index, pd.DatetimeIndex):
             # Index is datetime, access directly
             start_ts = data.index[0]

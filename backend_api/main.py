@@ -168,6 +168,66 @@ class CreateRunRequest(BaseModel):
     phase3_config: Optional[Dict[str, Any]] = None
 
 
+def _run_darwin_task(
+    seed_prompt: str,
+    universe: UniverseSpec,
+    time_config: TimeConfig,
+    depth: int,
+    branching: int,
+    survivors_per_layer: int,
+    phase3_config: Optional[Phase3Config],
+    run_id: str,
+):
+    """Background task: fetch market data, then run Darwin."""
+    try:
+        logger.info(f"[{run_id}] Fetching market data...")
+        client = PolygonClient()
+        symbols = universe.resolve_symbols()
+        dr = time_config.date_range
+
+        # Fetch data for first symbol (Darwin operates per-symbol)
+        data = None
+        for sym in symbols:
+            try:
+                df = client.get_bars(
+                    symbol=sym,
+                    timeframe=time_config.timeframe,
+                    start=dr.start,
+                    end=dr.end,
+                )
+                if df is not None and not df.empty:
+                    logger.info(f"[{run_id}] Fetched {len(df)} bars for {sym}")
+                    if data is None:
+                        data = df  # Use first successful symbol
+                        logger.info(f"[{run_id}] Using {sym} as primary data source")
+            except Exception as e:
+                logger.warning(f"[{run_id}] Failed to fetch {sym}: {e}")
+
+        if data is None:
+            logger.error(f"[{run_id}] No data fetched for any symbol!")
+            return
+
+        logger.info(f"[{run_id}] Starting Darwin evolution with {len(data)} bars...")
+        summary = run_darwin(
+            data=data,
+            universe=universe,
+            time_config=time_config,
+            nl_text=seed_prompt,
+            depth=depth,
+            branching=branching,
+            survivors_per_layer=survivors_per_layer,
+            phase3_config=phase3_config,
+            run_id=run_id,
+            rescue_mode=True,
+        )
+        logger.info(f"[{run_id}] Darwin run complete!")
+
+    except Exception as e:
+        logger.error(f"[{run_id}] Darwin run failed: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+
+
 @app.post("/api/runs")
 async def create_run(request: CreateRunRequest, background_tasks: BackgroundTasks):
     """Create a new Darwin evolution run in the background."""
@@ -179,7 +239,6 @@ async def create_run(request: CreateRunRequest, background_tasks: BackgroundTask
         time_dict = request.time_config.copy()
         if 'date_range' in time_dict and time_dict['date_range']:
             dr = time_dict['date_range']
-            # DateRange expects YYYY-MM-DD strings, not datetime objects
             time_dict['date_range'] = DateRange(
                 start=dr['start'][:10] if isinstance(dr['start'], str) else dr['start'].strftime('%Y-%m-%d'),
                 end=dr['end'][:10] if isinstance(dr['end'], str) else dr['end'].strftime('%Y-%m-%d')
@@ -195,17 +254,17 @@ async def create_run(request: CreateRunRequest, background_tasks: BackgroundTask
         import uuid
         run_id = f"run_{uuid.uuid4().hex[:8]}"
 
-        # Start Darwin in background
+        # Start Darwin in background (maps frontend names to run_darwin params)
         background_tasks.add_task(
-            run_darwin,
+            _run_darwin_task,
             seed_prompt=request.seed_prompt,
             universe=universe,
             time_config=time_config,
-            generations=request.generations,
-            survivors_per_gen=request.survivors_per_gen,
-            children_per_survivor=request.children_per_survivor,
+            depth=request.generations,
+            branching=request.children_per_survivor,
+            survivors_per_layer=request.survivors_per_gen,
             phase3_config=phase3_config,
-            run_id=run_id
+            run_id=run_id,
         )
 
         return {

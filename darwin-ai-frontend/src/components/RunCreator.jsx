@@ -57,7 +57,7 @@ Create a gap-and-go momentum trading strategy:
             symbols: ['TSLA', 'NVDA', 'AAPL', 'AMD', 'COIN']
           },
           time_config: {
-            timeframe: '5min',
+            timeframe: '5m',
             lookback_days: 90,
             date_range: {
               start: '2024-10-01',
@@ -172,7 +172,7 @@ Create a gap-and-go momentum trading strategy:
 
           <div className="p-4 bg-info-500/10 border border-info-500/30 rounded-xl">
             <p className="text-xs text-info-300">
-              <strong>Configuration:</strong> 2 generations • 3 survivors per gen • 5 Phase 3 episodes with event tagging • 5min timeframe • Oct 2024 - Jan 2025
+              <strong>Configuration:</strong> 2 generations • 3 survivors per gen • 5 Phase 3 episodes with event tagging • 5m timeframe • Oct 2024 - Jan 2025
             </p>
           </div>
         </form>
