@@ -169,9 +169,10 @@ export default function Layout({
         </div>
       </header>
 
-      <div className="flex-1 overflow-hidden">
-        <div className="mx-auto h-full max-w-7xl px-5 py-5 sm:px-6">
-          <div className="grid h-full min-h-0 grid-cols-1 gap-5 lg:grid-cols-5">
+      {/* On small screens, allow the page to scroll so the right column panels aren't clipped. */}
+      <div className="flex-1 overflow-auto">
+        <div className="mx-auto min-h-full max-w-7xl px-5 py-5 sm:px-6">
+          <div className="grid h-auto min-h-0 grid-cols-1 gap-5 lg:h-full lg:grid-cols-5">
             <section
               className={`panel ${panelChrome} flex min-h-0 flex-col overflow-hidden lg:col-span-3`}
             >
