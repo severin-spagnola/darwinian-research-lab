@@ -11,6 +11,7 @@ import YouComFeed from './components/feed/YouComFeed.jsx'
 import APICostDashboard from './components/dashboard/APICostDashboard.jsx'
 import MetricsDashboard from './components/dashboard/MetricsDashboard.jsx'
 import PlaybackControls from './components/controls/PlaybackControls.jsx'
+import RunCreator from './components/RunCreator.jsx'
 
 import useEvolutionPlayback from './hooks/useEvolutionPlayback.js'
 import { generateEvolutionRun } from './data/mockDataGenerator.js'
@@ -83,6 +84,7 @@ export default function App() {
   const [realLlmUsage, setRealLlmUsage] = useState(null)
   const [selectedRunId, setSelectedRunId] = useState(null)
   const [availableRuns, setAvailableRuns] = useState([])
+  const [showCreator, setShowCreator] = useState(false)
 
   // Mock data fallback
   const mockData = useMemo(() => generateEvolutionRun(5), [])
@@ -217,9 +219,37 @@ export default function App() {
   // Use real LLM usage if available, otherwise use playback costs
   const costData = useRealData && realLlmUsage ? realLlmUsage : apiCosts
 
+  // Handler for when a new run is created
+  const handleRunCreated = async (runId) => {
+    console.log('New run created:', runId)
+    setShowCreator(false)
+    setSelectedRunId(runId)
+    setAvailableRuns(prev => [runId, ...prev])
+    setUseRealData(true)
+    // Reload data
+    window.location.reload()
+  }
+
   // Still checking backend
   if (useRealData === null) {
     return <BootScreen />
+  }
+
+  // Show RunCreator if no real data and user wants to create a run
+  if (!useRealData && showCreator) {
+    return (
+      <div className="min-h-screen bg-bg">
+        <div className="container mx-auto py-12">
+          <button
+            onClick={() => setShowCreator(false)}
+            className="mb-4 text-sm text-text-muted hover:text-text transition-colors"
+          >
+            ← Back to Demo Data
+          </button>
+          <RunCreator onRunCreated={handleRunCreated} />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -237,6 +267,19 @@ export default function App() {
           </MotionDiv>
         ) : null}
       </AnimatePresence>
+
+      {/* Show "Create Run" button if using mock data */}
+      {!useRealData && !booting && (
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={() => setShowCreator(true)}
+            className="px-4 py-2 bg-success-500 hover:bg-success-600 text-white font-medium rounded-lg shadow-lg transition-colors flex items-center gap-2"
+          >
+            <Dna className="w-4 h-4" />
+            Create Real Run
+          </button>
+        </div>
+      )}
 
       {/* Keep the app mounted under the boot screen so playback state is ready when it fades. */}
       <div className={booting ? 'pointer-events-none fixed inset-0 opacity-0' : 'block'}>

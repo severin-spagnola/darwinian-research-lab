@@ -158,6 +158,66 @@ async def list_runs():
     return {"runs": runs}
 
 
+class CreateRunRequest(BaseModel):
+    seed_prompt: str
+    universe: Dict[str, Any]
+    time_config: Dict[str, Any]
+    generations: int = 2
+    survivors_per_gen: int = 3
+    children_per_survivor: int = 2
+    phase3_config: Optional[Dict[str, Any]] = None
+
+
+@app.post("/api/runs")
+async def create_run(request: CreateRunRequest, background_tasks: BackgroundTasks):
+    """Create a new Darwin evolution run in the background."""
+    try:
+        # Parse config
+        universe = UniverseSpec(**request.universe)
+
+        # Handle time_config with date_range
+        time_dict = request.time_config.copy()
+        if 'date_range' in time_dict and time_dict['date_range']:
+            dr = time_dict['date_range']
+            time_dict['date_range'] = DateRange(
+                start=datetime.fromisoformat(dr['start'].replace('Z', '+00:00')),
+                end=datetime.fromisoformat(dr['end'].replace('Z', '+00:00'))
+            )
+        time_config = TimeConfig(**time_dict)
+
+        # Parse phase3_config if provided
+        phase3_config = None
+        if request.phase3_config:
+            phase3_config = Phase3Config(**request.phase3_config)
+
+        # Generate run ID
+        import uuid
+        run_id = f"run_{uuid.uuid4().hex[:8]}"
+
+        # Start Darwin in background
+        background_tasks.add_task(
+            run_darwin,
+            seed_prompt=request.seed_prompt,
+            universe=universe,
+            time_config=time_config,
+            generations=request.generations,
+            survivors_per_gen=request.survivors_per_gen,
+            children_per_survivor=request.children_per_survivor,
+            phase3_config=phase3_config,
+            run_id=run_id
+        )
+
+        return {
+            "run_id": run_id,
+            "status": "started",
+            "message": f"Darwin run {run_id} started in background. Check /api/runs/{run_id} for progress."
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to create run: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 @app.get("/api/runs/{run_id}")
 async def get_run(run_id: str):
     """Get run summary and config."""
