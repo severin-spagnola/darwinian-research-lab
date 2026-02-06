@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Play, Loader2, Sparkles, Zap } from 'lucide-react'
+import { Play, Loader2, Sparkles } from 'lucide-react'
 
 const MotionDiv = motion.div
 
@@ -8,6 +8,7 @@ export default function RunCreator({ onRunCreated }) {
   const [prompt, setPrompt] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState(null)
+  const [demoMode, setDemoMode] = useState(true)
 
   // Load Gap & Go prompt as default
   const loadGapAndGo = () => {
@@ -33,37 +34,6 @@ Create a gap-and-go momentum trading strategy:
 **Risk Management:**
 - Max 1 position per ticker per day
 - Only enter if ATR(14) > 1.5 (sufficient volatility)`)
-  }
-
-  const handleDemoRun = async () => {
-    setIsCreating(true)
-    setError(null)
-
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/runs`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          seed_prompt: 'Gap & Go Demo',
-          universe: { type: 'explicit', symbols: ['TSLA'] },
-          time_config: { timeframe: '5m', lookback_days: 90, date_range: { start: '2024-10-01', end: '2025-01-31' } },
-          demo_mode: true
-        })
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null)
-        throw new Error(errorData?.detail || `HTTP ${response.status}`)
-      }
-
-      const data = await response.json()
-      if (onRunCreated) onRunCreated(data.run_id)
-      setIsCreating(false)
-    } catch (err) {
-      console.error('Demo run failed:', err)
-      setError(err.message || 'Demo run failed. Check backend connection.')
-      setIsCreating(false)
-    }
   }
 
   const handleSubmit = async (e) => {
@@ -103,7 +73,8 @@ Create a gap-and-go momentum trading strategy:
             min_months: 1,
             max_months: 2,
             sampling_mode: 'uniform_random'
-          }
+          },
+          demo_mode: demoMode
         })
       })
 
@@ -139,7 +110,12 @@ Create a gap-and-go momentum trading strategy:
             <Sparkles className="w-5 h-5 text-primary-400" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-text">Create Darwin Run</h2>
+            <h2
+              className="text-xl font-bold text-text select-none"
+              onDoubleClick={() => setDemoMode(d => !d)}
+            >
+              Create Darwin Run
+            </h2>
             <p className="text-sm text-text-muted">
               Describe your strategy and let Darwin evolve it
             </p>
@@ -177,16 +153,6 @@ Create a gap-and-go momentum trading strategy:
 
           <div className="flex items-center gap-3">
             <button
-              type="button"
-              onClick={handleDemoRun}
-              disabled={isCreating}
-              className="flex items-center gap-2 px-6 py-3 bg-success-500 hover:bg-success-600 disabled:bg-success-500/50 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
-            >
-              <Zap className="w-4 h-4" />
-              Instant Demo
-            </button>
-
-            <button
               type="submit"
               disabled={isCreating || !prompt.trim()}
               className="flex items-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-500/50 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
@@ -206,7 +172,9 @@ Create a gap-and-go momentum trading strategy:
 
             {isCreating && (
               <p className="text-sm text-text-muted">
-                This will take 10-15 minutes. Darwin is compiling strategies, fetching data, and running Phase 3 validation...
+                {demoMode
+                  ? 'Loading pre-computed results...'
+                  : 'This will take 10-15 minutes. Darwin is compiling strategies, fetching data, and running Phase 3 validation...'}
               </p>
             )}
           </div>
@@ -214,6 +182,7 @@ Create a gap-and-go momentum trading strategy:
           <div className="p-4 bg-info-500/10 border border-info-500/30 rounded-xl">
             <p className="text-xs text-info-300">
               <strong>Configuration:</strong> 2 generations • 3 survivors per gen • 5 Phase 3 episodes with event tagging • 5m timeframe • Oct 2024 - Jan 2025
+              {demoMode && <span className="ml-2 text-success-400">(demo mode)</span>}
             </p>
           </div>
         </form>
