@@ -50,7 +50,10 @@ Create a gap-and-go momentum trading strategy:
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           seed_prompt: prompt,
-          universe: { symbols: ['TSLA', 'NVDA', 'AAPL', 'AMD', 'COIN'] },
+          universe: {
+            type: 'explicit',
+            symbols: ['TSLA', 'NVDA', 'AAPL', 'AMD', 'COIN']
+          },
           time_config: {
             timeframe: '5min',
             lookback_days: 90,

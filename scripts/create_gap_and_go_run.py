@@ -16,7 +16,7 @@ with open(prompt_path) as f:
     seed_prompt = f.read()
 
 # Universe (intraday stocks)
-universe = UniverseSpec(symbols=["TSLA", "NVDA", "AAPL", "AMD", "COIN"])
+universe = UniverseSpec(type="explicit", symbols=["TSLA", "NVDA", "AAPL", "AMD", "COIN"])
 
 # Time config for intraday strategy
 time_config = TimeConfig(

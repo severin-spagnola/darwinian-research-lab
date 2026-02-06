@@ -11,7 +11,7 @@ from graph.schema import UniverseSpec, TimeConfig, DateRange
 from datetime import datetime
 
 # Simple configuration for quick demo
-universe = UniverseSpec(symbols=["AAPL", "TSLA", "NVDA"])
+universe = UniverseSpec(type="explicit", symbols=["AAPL", "TSLA", "NVDA"])
 time_config = TimeConfig(
     timeframe="1d",
     lookback_days=365,
