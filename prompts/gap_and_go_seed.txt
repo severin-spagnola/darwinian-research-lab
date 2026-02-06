@@ -1,0 +1,41 @@
+# Gap & Go Momentum Strategy - Seed Prompt
+
+Create a gap-and-go momentum trading strategy with the following specifications:
+
+## Universe
+Trade these high-momentum tickers: TSLA, NVDA, AAPL, AMD, COIN, PLTR, META, MSFT, GOOGL, AMZN, AVGO, QCOM, MU, CRWD, SNOW
+
+## Core Logic
+1. **Gap Detection**: At market open (9:30 AM ET), compare current price to previous day's close
+2. **Entry Criteria**:
+   - Gap up must be at least 2% above previous close
+   - Wait for confirmation: enter on the 3rd consecutive green 5-minute candle
+   - Volume on entry candle must be above 20-period average
+   - RSI(14) should be between 50-70 (not overbought)
+3. **Exit Rules**:
+   - Take profit at 2.5% gain from entry
+   - Stop loss at 1% below entry
+   - Time stop: close position after 60 minutes if neither target hit
+4. **Time Window**: Only trade between 9:30 AM - 11:00 AM ET
+
+## Risk Management
+- Maximum 1 position per ticker per day
+- Only enter if ATR(14) > 1.5 (sufficient volatility)
+
+## Technical Indicators to Use
+- RSI for momentum confirmation
+- Volume moving average for liquidity check
+- ATR for volatility filtering
+- Simple moving average crossovers optional
+
+## Mutation-Friendly Parameters
+The strategy should be easy to mutate on:
+- Gap threshold (2% vs 3% vs 5%)
+- Number of confirmation candles (2nd vs 3rd vs 4th)
+- Profit target (1.5% vs 2% vs 3%)
+- Stop loss tightness (0.5% vs 1% vs 1.5%)
+- RSI thresholds
+- Time window duration
+- Volume multiplier requirements
+
+Generate a StrategyGraph that implements this logic using technical indicator nodes, comparison operators, and position management.

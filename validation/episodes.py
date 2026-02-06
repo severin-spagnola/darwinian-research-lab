@@ -4,6 +4,8 @@ import pandas as pd
 import random
 from typing import Dict, List, Optional
 
+from validation.event_calendar import is_event_day, get_event_description
+
 
 @dataclass
 class EpisodeSpec:
@@ -435,12 +437,26 @@ class RegimeTagger:
         vol_bucket = self._tag_volatility(df_episode, history_df)
         chop_bucket = self._tag_choppiness(df_episode)
         dd_state = self._tag_drawdown(df_episode)
-        return {
+
+        tags = {
             "trend": trend,
             "vol_bucket": vol_bucket,
             "chop_bucket": chop_bucket,
             "drawdown_state": dd_state,
         }
+
+        # Add event_day tag if episode overlaps with a known market event
+        if not df_episode.empty:
+            start_date = pd.to_datetime(df_episode.index[0])
+            end_date = pd.to_datetime(df_episode.index[-1])
+
+            # Check if any day in the episode is an event day
+            for single_date in pd.date_range(start_date, end_date, freq='D'):
+                if is_event_day(single_date):
+                    tags["event_day"] = get_event_description(single_date)
+                    break
+
+        return tags
 
     def _tag_trend(self, close: pd.Series) -> str:
         if len(close) < 2:

@@ -61,9 +61,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:5173",
-        # Add your production frontend domain here:
-        # "https://your-frontend.vercel.app",
-        # "https://your-frontend.netlify.app",
+        # Vercel production domains
+        "https://darwinian-research-kysnor6yn-severin-spagnolas-projects.vercel.app",
+        "https://*.vercel.app",  # Allow all Vercel preview deployments
     ],
     allow_credentials=True,
     allow_methods=["*"],
