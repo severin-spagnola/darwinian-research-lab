@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Dna, Loader2 } from 'lucide-react'
 
@@ -82,7 +82,9 @@ export default function App() {
   const [realLlmUsage, setRealLlmUsage] = useState(null)
   const [selectedRunId, setSelectedRunId] = useState(null)
   const [availableRuns, setAvailableRuns] = useState([])
-  const [showCreator, setShowCreator] = useState(false)
+  const [runLoadError, setRunLoadError] = useState(null)
+  const [isLoadingRun, setIsLoadingRun] = useState(false)
+  const labRef = useRef(null)
 
   // Mock data fallback
   const mockData = useMemo(() => generateEvolutionRun(5), [])
@@ -124,16 +126,42 @@ export default function App() {
 
     async function load() {
       try {
-        const [summary, usage] = await Promise.all([
-          getRunSummary(selectedRunId),
-          getRunLLMUsage(selectedRunId).catch(() => null),
-        ])
+        setIsLoadingRun(true)
+        setRunLoadError(null)
+
+        // Poll summary because newly-created runs may not have results immediately.
+        const poll = async (fn, { maxAttempts = 60, delayMs = 2000 } = {}) => {
+          let lastErr = null
+          for (let i = 0; i < maxAttempts; i += 1) {
+            if (cancelled) return null
+            try {
+              return await fn()
+            } catch (err) {
+              lastErr = err
+              await new Promise((r) => setTimeout(r, delayMs))
+            }
+          }
+          throw lastErr ?? new Error('Timed out')
+        }
+
+        const summary = await poll(() => getRunSummary(selectedRunId), {
+          maxAttempts: 60,
+          delayMs: 2000,
+        })
+
+        const usage = await poll(() => getRunLLMUsage(selectedRunId), {
+          maxAttempts: 20,
+          delayMs: 3000,
+        }).catch(() => null)
+
         if (cancelled) return
         setRealRunData(summary)
         setRealLlmUsage(usage)
+        setIsLoadingRun(false)
       } catch (err) {
-        console.error('Failed to load run data:', err)
-        if (!cancelled) setUseRealData(false) // Fall back to mock
+        if (cancelled) return
+        setIsLoadingRun(false)
+        setRunLoadError(err instanceof Error ? err.message : String(err))
       }
     }
 
@@ -219,35 +247,23 @@ export default function App() {
 
   // Handler for when a new run is created
   const handleRunCreated = async (runId) => {
-    console.log('New run created:', runId)
-    setShowCreator(false)
-    setSelectedRunId(runId)
-    setAvailableRuns(prev => [runId, ...prev])
+    const id = String(runId)
+    setRealRunData(null)
+    setRealLlmUsage(null)
+    setRunLoadError(null)
+    setSelectedRunId(id)
+    setAvailableRuns((prev) => [id, ...(Array.isArray(prev) ? prev : [])])
     setUseRealData(true)
-    // Reload data
-    window.location.reload()
+
+    // Scroll into the lab UI after submitting a prompt.
+    setTimeout(() => {
+      labRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
   }
 
   // Still checking backend
   if (useRealData === null) {
     return <BootScreen />
-  }
-
-  // Show RunCreator if no real data and user wants to create a run
-  if (!useRealData && showCreator) {
-    return (
-      <div className="min-h-screen bg-bg">
-        <div className="container mx-auto py-12">
-          <button
-            onClick={() => setShowCreator(false)}
-            className="mb-4 text-sm text-text-muted hover:text-text transition-colors"
-          >
-            ← Back to Demo Data
-          </button>
-          <RunCreator onRunCreated={handleRunCreated} />
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -266,105 +282,137 @@ export default function App() {
         ) : null}
       </AnimatePresence>
 
-      {/* Show "Create Run" button if using mock data */}
-      {!useRealData && !booting && (
-        <div className="fixed top-4 right-4 z-50">
-          <button
-            onClick={() => setShowCreator(true)}
-            className="px-4 py-2 bg-success-500 hover:bg-success-600 text-white font-medium rounded-lg shadow-lg transition-colors flex items-center gap-2"
-          >
-            <Dna className="w-4 h-4" />
-            Create Real Run
-          </button>
-        </div>
-      )}
-
       {/* Keep the app mounted under the boot screen so playback state is ready when it fades. */}
       <div className={booting ? 'pointer-events-none fixed inset-0 opacity-0' : 'block'}>
-        <Layout
-          currentGeneration={currentGeneration}
-          totalGenerations={totalGenerations}
-          currentPhase={currentPhase}
-          isPlaying={isPlaying}
-          playbackSpeed={playbackSpeed}
-          onPlayPause={() => (isPlaying ? pause() : play())}
-          onSpeedChange={(s) => setSpeed(s)}
-          onNextGeneration={() => nextGeneration()}
-          selectedStrategy={selectedStrategy}
-          activeLeftTab={activeLeftTab}
-          onLeftTabChange={setActiveLeftTab}
-          ControlsComponent={PlaybackControls}
-          availableRuns={availableRuns}
-          selectedRunId={selectedRunId}
-          onRunSelect={(runId) => setSelectedRunId(runId)}
-          useRealData={useRealData}
-        >
-          <Layout.Arena>
-            <EvolutionArena
-              strategies={strategies}
-              generationNumber={currentGeneration}
-              onStrategySelect={(s) => selectStrategy(s?.id ?? null)}
-              selectedStrategyId={selectedStrategy?.id ?? null}
-            />
-          </Layout.Arena>
+        <div className="bg-bg">
+          <div className="mx-auto max-w-screen-2xl px-3 py-4 sm:px-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-text">
+                <span className="grid h-9 w-9 place-items-center rounded-2xl bg-primary-500/15 ring-1 ring-inset ring-primary-500/25">
+                  <Dna className="h-4 w-4 text-primary-200" />
+                </span>
+                <div className="min-w-0">
+                  <div className="truncate">Create a Darwin run</div>
+                  <div className="mt-0.5 text-xs font-medium text-text-muted">
+                    Prompt the system, then scroll into the lab to watch evolution.
+                  </div>
+                </div>
+              </div>
 
-          <Layout.Validation>
-            <ValidationViewer
-              strategy={selectedStrategy}
-              isAnimating={currentPhase === 'validation'}
-            />
-          </Layout.Validation>
+              <div className="hidden items-center gap-2 md:flex">
+                <div className="rounded-full bg-panel-elevated px-3 py-1.5 text-xs text-text-muted ring-1 ring-inset ring-border/70">
+                  Data: <span className="text-text">{useRealData ? 'Backend' : 'Demo'}</span>
+                </div>
+                {selectedRunId ? (
+                  <div className="rounded-full bg-panel-elevated px-3 py-1.5 text-xs text-text-muted ring-1 ring-inset ring-border/70">
+                    Run: <span className="font-mono text-text">{selectedRunId}</span>
+                  </div>
+                ) : null}
+              </div>
+            </div>
 
-          <Layout.Graph>
-            <StrategyGraphViewer strategyGraph={selectedStrategy?.graph ?? null} />
-          </Layout.Graph>
+            {isLoadingRun ? (
+              <div className="mb-3 rounded-2xl border border-border/70 bg-panel-elevated px-4 py-3 text-sm text-text-muted">
+                Loading run results from backend (polling)…
+              </div>
+            ) : null}
 
-          <Layout.Lineage>
-            <LineageTree
-              lineageData={lineageData}
-              selectedStrategyId={selectedStrategy?.id ?? null}
-              onStrategySelect={(payload) => {
-                const id = typeof payload === 'string' ? payload : payload?.id
-                if (id) selectStrategy(id)
-              }}
-              generationCount={totalGenerations}
-            />
-          </Layout.Lineage>
+            {runLoadError ? (
+              <div className="mb-3 rounded-2xl border border-danger-500/35 bg-danger-500/10 px-4 py-3 text-sm text-danger-100">
+                Backend run data is not ready yet: <span className="font-mono">{runLoadError}</span>
+              </div>
+            ) : null}
 
-          <Layout.YouFeed>
-            <YouComFeed
-              entries={youComActivity}
-              isActive={false}
-              currentGeneration={currentGeneration}
-              runId={selectedRunId}
-              onInsightGenerated={() => {}}
-            />
-          </Layout.YouFeed>
+            <RunCreator onRunCreated={handleRunCreated} />
+          </div>
 
-          <Layout.ApiCosts>
-            <APICostDashboard
-              costData={costData}
+          <div ref={labRef}>
+            <Layout
               currentGeneration={currentGeneration}
               totalGenerations={totalGenerations}
-              updateInterval={1000}
-              simulate={!useRealData}
-            />
-          </Layout.ApiCosts>
-
-          <Layout.Metrics>
-            <MetricsDashboard
-              generationStats={{
-                strategies,
-                generationNumber: currentGeneration,
-              }}
+              currentPhase={currentPhase}
+              isPlaying={isPlaying}
+              playbackSpeed={playbackSpeed}
+              onPlayPause={() => (isPlaying ? pause() : play())}
+              onSpeedChange={(s) => setSpeed(s)}
+              onNextGeneration={() => nextGeneration()}
               selectedStrategy={selectedStrategy}
-              allGenerations={(evolutionData?.generations ?? []).slice(
-                0,
-                Math.max(0, Math.min(totalGenerations, currentGeneration + 1)),
-              )}
-            />
-          </Layout.Metrics>
-        </Layout>
+              activeLeftTab={activeLeftTab}
+              onLeftTabChange={setActiveLeftTab}
+              ControlsComponent={PlaybackControls}
+              availableRuns={availableRuns}
+              selectedRunId={selectedRunId}
+              onRunSelect={(runId) => setSelectedRunId(runId)}
+              useRealData={useRealData}
+            >
+              <Layout.Arena>
+                <EvolutionArena
+                  strategies={strategies}
+                  generationNumber={currentGeneration}
+                  onStrategySelect={(s) => selectStrategy(s?.id ?? null)}
+                  selectedStrategyId={selectedStrategy?.id ?? null}
+                />
+              </Layout.Arena>
+
+              <Layout.Validation>
+                <ValidationViewer
+                  strategy={selectedStrategy}
+                  isAnimating={currentPhase === 'validation'}
+                />
+              </Layout.Validation>
+
+              <Layout.Graph>
+                <StrategyGraphViewer strategyGraph={selectedStrategy?.graph ?? null} />
+              </Layout.Graph>
+
+              <Layout.Lineage>
+                <LineageTree
+                  lineageData={lineageData}
+                  selectedStrategyId={selectedStrategy?.id ?? null}
+                  onStrategySelect={(payload) => {
+                    const id = typeof payload === 'string' ? payload : payload?.id
+                    if (id) selectStrategy(id)
+                  }}
+                  generationCount={totalGenerations}
+                />
+              </Layout.Lineage>
+
+              <Layout.YouFeed>
+                <YouComFeed
+                  entries={youComActivity}
+                  isActive={false}
+                  currentGeneration={currentGeneration}
+                  runId={selectedRunId}
+                  onInsightGenerated={() => {}}
+                />
+              </Layout.YouFeed>
+
+              <Layout.ApiCosts>
+                <APICostDashboard
+                  costData={costData}
+                  currentGeneration={currentGeneration}
+                  totalGenerations={totalGenerations}
+                  updateInterval={1000}
+                  simulate={!useRealData}
+                />
+              </Layout.ApiCosts>
+
+              <Layout.Metrics>
+                <MetricsDashboard
+                  generationStats={{
+                    strategies,
+                    generationNumber: currentGeneration,
+                  }}
+                  selectedStrategy={selectedStrategy}
+                  allGenerations={(evolutionData?.generations ?? []).slice(
+                    0,
+                    Math.max(0, Math.min(totalGenerations, currentGeneration + 1)),
+                  )}
+                />
+              </Layout.Metrics>
+            </Layout>
+          </div>
+        </div>
       </div>
     </>
   )
