@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Play, Loader2, Sparkles } from 'lucide-react'
 
+const MotionDiv = motion.div
+
 export default function RunCreator({ onRunCreated }) {
   const [prompt, setPrompt] = useState('')
   const [isCreating, setIsCreating] = useState(false)
@@ -95,7 +97,7 @@ Create a gap-and-go momentum trading strategy:
   }
 
   return (
-    <motion.div
+    <MotionDiv
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="w-full max-w-4xl mx-auto p-6"
@@ -175,6 +177,6 @@ Create a gap-and-go momentum trading strategy:
           </div>
         </form>
       </div>
-    </motion.div>
+    </MotionDiv>
   )
 }

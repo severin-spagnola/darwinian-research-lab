@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Crown, Skull, Sparkles, X } from 'lucide-react'
 
@@ -92,6 +93,17 @@ export default function StrategyCard({
   onSelect,
   animationDelay = 0,
 }) {
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false)
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
+  const rafRef = useRef(0)
+  const canPortal = typeof document !== 'undefined'
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
   const state = strategy?.state ?? 'alive'
   const isElite = state === 'elite'
   const isDead = state === 'dead'
@@ -256,8 +268,108 @@ export default function StrategyCard({
     verdict,
   ])
 
+  const tooltipPosition = useMemo(() => {
+    // Keep the tooltip near the cursor, but avoid going off-screen.
+    // (Approximate size works well and avoids layout measuring.)
+    const margin = 12
+    const approxW = 360
+    const approxH = 260
+    const vw = typeof window !== 'undefined' ? window.innerWidth : 1024
+    const vh = typeof window !== 'undefined' ? window.innerHeight : 768
+
+    let x = cursorPos.x + 14
+    let y = cursorPos.y + 14
+
+    if (x + approxW + margin > vw) x = Math.max(margin, vw - approxW - margin)
+    if (y + approxH + margin > vh) y = Math.max(margin, vh - approxH - margin)
+
+    return { x, y }
+  }, [cursorPos.x, cursorPos.y])
+
+  const tooltipNode =
+    canPortal && isTooltipOpen
+      ? createPortal(
+          <div
+            className="pointer-events-none fixed z-[9999] w-[360px] max-w-[calc(100vw-24px)]"
+            style={{ left: tooltipPosition.x, top: tooltipPosition.y }}
+            role="tooltip"
+          >
+            <div className="rounded-2xl border border-border/70 bg-panel/95 p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.08),0_0_24px_rgba(16,185,129,0.10)] backdrop-blur">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold text-text">{title}</div>
+                  <div className="mt-1 truncate font-mono text-[11px] text-text-subtle">
+                    {tooltipText.id}
+                  </div>
+                </div>
+                <div className="rounded-full bg-panel-elevated px-2.5 py-1 text-[11px] font-semibold text-text-muted ring-1 ring-inset ring-border/70">
+                  {tooltipText.verdict}
+                </div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                <div className="rounded-xl border border-border/60 bg-panel-elevated p-2.5">
+                  <div className="text-[11px] text-text-subtle">Fitness</div>
+                  <div className="mt-1 font-mono text-sm font-semibold tabular-nums text-text">
+                    {tooltipText.fitness}
+                  </div>
+                  <div className="mt-2 text-[11px] text-text-muted">
+                    Median:{' '}
+                    <span className="font-mono tabular-nums text-text">
+                      {tooltipText.median_fitness}
+                    </span>
+                  </div>
+                </div>
+                <div className="rounded-xl border border-border/60 bg-panel-elevated p-2.5">
+                  <div className="text-[11px] text-text-subtle">Risk</div>
+                  <div className="mt-1 text-[11px] text-text-muted">
+                    Sharpe: <span className="font-mono text-text">{tooltipText.sharpe}</span>
+                  </div>
+                  <div className="mt-1 text-[11px] text-text-muted">
+                    Max DD:{' '}
+                    <span className="font-mono text-text">{tooltipText.max_drawdown}</span>
+                  </div>
+                  <div className="mt-1 text-[11px] text-text-muted">
+                    Penalty:{' '}
+                    <span className="font-mono text-text">{tooltipText.total_penalty}</span>
+                  </div>
+                </div>
+                <div className="col-span-2 rounded-xl border border-border/60 bg-panel-elevated p-2.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-text-muted">
+                    <div>
+                      Gen: <span className="font-mono text-text">{tooltipText.generation}</span>
+                    </div>
+                    <div>
+                      Episodes:{' '}
+                      <span className="font-mono text-text">{tooltipText.episodes}</span>
+                    </div>
+                    <div>
+                      Regimes:{' '}
+                      <span className="font-mono text-text">{tooltipText.unique_regimes}</span>
+                    </div>
+                    <div>
+                      Years:{' '}
+                      <span className="font-mono text-text">{tooltipText.years_covered}</span>
+                    </div>
+                  </div>
+                  <div className="mt-2 truncate text-[11px] text-text-muted">
+                    Universe: <span className="font-mono text-text">{tooltipText.universe}</span>
+                  </div>
+                  <div className="mt-2 truncate text-[11px] text-text-muted">
+                    Parent: <span className="font-mono text-text">{parentLabel}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )
+      : null
+
   return (
-    <MotionArticle
+    <>
+      {tooltipNode}
+      <MotionArticle
       layout
       initial="initial"
       animate={animateKey}
@@ -272,6 +384,18 @@ export default function StrategyCard({
             : undefined,
       }}
       onClick={() => onSelect?.(strategy)}
+      onMouseEnter={() => setIsTooltipOpen(true)}
+      onMouseLeave={() => setIsTooltipOpen(false)}
+      onMouseMove={(e) => {
+        // Throttle mousemove updates.
+        if (rafRef.current) return
+        rafRef.current = requestAnimationFrame(() => {
+          rafRef.current = 0
+          setCursorPos({ x: e.clientX, y: e.clientY })
+        })
+      }}
+      onFocus={() => setIsTooltipOpen(true)}
+      onBlur={() => setIsTooltipOpen(false)}
       className={[
         'group relative cursor-pointer select-none overflow-hidden rounded-2xl border bg-panel-elevated p-3',
         'transition-[border-color,transform,filter] duration-200',
@@ -350,72 +474,6 @@ export default function StrategyCard({
           </MotionDiv>
         ) : null}
       </AnimatePresence>
-
-      {/* Hover tooltip overlay (kept inside card to avoid clipping) */}
-      <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-        <div className="absolute inset-0 bg-bg/85 backdrop-blur-sm" />
-        <div className="relative h-full p-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="truncate text-sm font-semibold">{title}</div>
-              <div className="mt-1 truncate font-mono text-[11px] text-text-subtle">
-                {tooltipText.id}
-              </div>
-            </div>
-            <div className="rounded-full bg-panel-elevated px-2.5 py-1 text-[11px] font-semibold text-text-muted ring-1 ring-inset ring-border/70">
-              {tooltipText.verdict}
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
-            <div className="rounded-xl border border-border/60 bg-panel p-3">
-              <div className="text-[11px] text-text-subtle">Fitness</div>
-              <div className="mt-1 font-mono text-sm font-semibold tabular-nums text-text">
-                {tooltipText.fitness}
-              </div>
-              <div className="mt-2 text-[11px] text-text-muted">
-                Median: <span className="font-mono text-text">{tooltipText.median_fitness}</span>
-              </div>
-            </div>
-            <div className="rounded-xl border border-border/60 bg-panel p-3">
-              <div className="text-[11px] text-text-subtle">Risk</div>
-              <div className="mt-1 text-[11px] text-text-muted">
-                Sharpe: <span className="font-mono text-text">{tooltipText.sharpe}</span>
-              </div>
-              <div className="mt-1 text-[11px] text-text-muted">
-                Max DD: <span className="font-mono text-text">{tooltipText.max_drawdown}</span>
-              </div>
-              <div className="mt-1 text-[11px] text-text-muted">
-                Penalty: <span className="font-mono text-text">{tooltipText.total_penalty}</span>
-              </div>
-            </div>
-            <div className="col-span-2 rounded-xl border border-border/60 bg-panel p-3">
-              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-text-muted">
-                <div>
-                  Gen: <span className="font-mono text-text">{tooltipText.generation}</span>
-                </div>
-                <div>
-                  Episodes: <span className="font-mono text-text">{tooltipText.episodes}</span>
-                </div>
-                <div>
-                  Regimes:{' '}
-                  <span className="font-mono text-text">{tooltipText.unique_regimes}</span>
-                </div>
-                <div>
-                  Years:{' '}
-                  <span className="font-mono text-text">{tooltipText.years_covered}</span>
-                </div>
-              </div>
-              <div className="mt-2 truncate text-[11px] text-text-muted">
-                Universe: <span className="font-mono text-text">{tooltipText.universe}</span>
-              </div>
-              <div className="mt-2 truncate text-[11px] text-text-muted">
-                Parent: <span className="font-mono text-text">{parentLabel}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Card content */}
       <div className="relative">
@@ -508,6 +566,7 @@ export default function StrategyCard({
           </div>
         ) : null}
       </div>
-    </MotionArticle>
+      </MotionArticle>
+    </>
   )
 }
