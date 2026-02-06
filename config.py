@@ -12,15 +12,15 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 # Directories
 BASE_DIR = Path(__file__).parent
-CACHE_DIR = BASE_DIR / "cache"
-GRAPHS_DIR = BASE_DIR / "graphs"
 RESULTS_DIR = BASE_DIR / "results"
+CACHE_DIR = RESULTS_DIR / "cache"  # On persistent disk (Render: 10GB mounted at /results)
+GRAPHS_DIR = BASE_DIR / "graphs"
 PATCHES_DIR = BASE_DIR / "patches"
 STATIC_DIR = BASE_DIR / "static"
 
-# Create directories
-for d in [CACHE_DIR, GRAPHS_DIR, RESULTS_DIR, PATCHES_DIR, STATIC_DIR]:
-    d.mkdir(exist_ok=True)
+# Create directories (RESULTS_DIR first, then subdirectories)
+for d in [RESULTS_DIR, CACHE_DIR, GRAPHS_DIR, PATCHES_DIR, STATIC_DIR]:
+    d.mkdir(exist_ok=True, parents=True)
 
 # Settings
 DEFAULT_TIMEFRAME = "5m"
