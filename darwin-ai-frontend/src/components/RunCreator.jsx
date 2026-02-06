@@ -4,11 +4,10 @@ import { Play, Loader2, Sparkles } from 'lucide-react'
 
 const MotionDiv = motion.div
 
-export default function RunCreator({ onRunCreated }) {
+export default function RunCreator({ onRunCreated, demoMode = true }) {
   const [prompt, setPrompt] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState(null)
-  const [demoMode, setDemoMode] = useState(true)
 
   // Load Gap & Go prompt as default
   const loadGapAndGo = () => {
@@ -110,10 +109,7 @@ Create a gap-and-go momentum trading strategy:
             <Sparkles className="w-5 h-5 text-primary-400" />
           </div>
           <div>
-            <h2
-              className="text-xl font-bold text-text select-none"
-              onDoubleClick={() => setDemoMode(d => !d)}
-            >
+            <h2 className="text-xl font-bold text-text">
               Create Darwin Run
             </h2>
             <p className="text-sm text-text-muted">
@@ -182,7 +178,6 @@ Create a gap-and-go momentum trading strategy:
           <div className="p-4 bg-info-500/10 border border-info-500/30 rounded-xl">
             <p className="text-xs text-info-300">
               <strong>Configuration:</strong> 2 generations • 3 survivors per gen • 5 Phase 3 episodes with event tagging • 5m timeframe • Oct 2024 - Jan 2025
-              {demoMode && <span className="ml-2 text-success-400">(demo mode)</span>}
             </p>
           </div>
         </form>

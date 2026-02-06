@@ -84,6 +84,7 @@ export default function App() {
   const [availableRuns, setAvailableRuns] = useState([])
   const [runLoadError, setRunLoadError] = useState(null)
   const [isLoadingRun, setIsLoadingRun] = useState(false)
+  const [demoMode, setDemoMode] = useState(true)
   const labRef = useRef(null)
 
   // Mock data fallback
@@ -288,9 +289,18 @@ export default function App() {
           <div className="mx-auto max-w-screen-2xl px-3 py-4 sm:px-4">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-sm font-semibold text-text">
-                <span className="grid h-9 w-9 place-items-center rounded-2xl bg-primary-500/15 ring-1 ring-inset ring-primary-500/25">
-                  <Dna className="h-4 w-4 text-primary-200" />
-                </span>
+                <button
+                  type="button"
+                  onClick={() => setDemoMode(d => !d)}
+                  className={`grid h-9 w-9 place-items-center rounded-2xl ring-1 ring-inset transition-colors ${
+                    demoMode
+                      ? 'bg-info-500/25 ring-info-500/40'
+                      : 'bg-primary-500/15 ring-primary-500/25'
+                  }`}
+                  title={demoMode ? 'Demo mode (click for live)' : 'Live mode (click for demo)'}
+                >
+                  <Dna className={`h-4 w-4 ${demoMode ? 'text-info-300' : 'text-primary-200'}`} />
+                </button>
                 <div className="min-w-0">
                   <div className="truncate">Create a Darwin run</div>
                   <div className="mt-0.5 text-xs font-medium text-text-muted">
@@ -300,9 +310,6 @@ export default function App() {
               </div>
 
               <div className="hidden items-center gap-2 md:flex">
-                <div className="rounded-full bg-panel-elevated px-3 py-1.5 text-xs text-text-muted ring-1 ring-inset ring-border/70">
-                  Data: <span className="text-text">{useRealData ? 'Backend' : 'Demo'}</span>
-                </div>
                 {selectedRunId ? (
                   <div className="rounded-full bg-panel-elevated px-3 py-1.5 text-xs text-text-muted ring-1 ring-inset ring-border/70">
                     Run: <span className="font-mono text-text">{selectedRunId}</span>
@@ -323,7 +330,7 @@ export default function App() {
               </div>
             ) : null}
 
-            <RunCreator onRunCreated={handleRunCreated} />
+            <RunCreator onRunCreated={handleRunCreated} demoMode={demoMode} />
           </div>
 
           <div ref={labRef}>
