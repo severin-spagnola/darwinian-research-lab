@@ -13,6 +13,8 @@ WORST_FITNESS_THRESHOLD = -0.5
 WORST_CASE_PENALTY = 0.5
 DISPERSION_THRESHOLD = 0.3
 DISPERSION_PENALTY = 0.25
+LUCKY_SPIKE_THRESHOLD = 0.6  # best episode accounts for >60% of total positive fitness
+LUCKY_SPIKE_PENALTY = 0.2
 
 
 def _collect_debug_stats(strategy: Any, episode_df: Any, result: Any) -> Dict[str, Any]:
@@ -116,6 +118,7 @@ class RobustAggregateResult:
     worst_case_penalty: float
     dispersion_penalty: float
     single_regime_penalty: float
+    lucky_spike_penalty: float
     episodes: List[RobustEpisodeResult]
     regime_coverage: Dict[str, Any]  # Per-regime statistics
     n_trades_per_episode: List[int]  # Track trades per episode
@@ -245,8 +248,9 @@ def evaluate_strategy_on_episodes(
     # Apply penalties
     worst_case_penalty = WORST_CASE_PENALTY if worst < WORST_FITNESS_THRESHOLD else 0.0
     dispersion_penalty = DISPERSION_PENALTY if std_val > DISPERSION_THRESHOLD else 0.0
+    lucky_spike_penalty = _compute_lucky_spike_penalty(fitnesses)
 
-    aggregated = med - (worst_case_penalty + dispersion_penalty + single_regime_penalty)
+    aggregated = med - (worst_case_penalty + dispersion_penalty + single_regime_penalty + lucky_spike_penalty)
 
     return RobustAggregateResult(
         aggregated_fitness=aggregated,
@@ -257,10 +261,30 @@ def evaluate_strategy_on_episodes(
         worst_case_penalty=worst_case_penalty,
         dispersion_penalty=dispersion_penalty,
         single_regime_penalty=single_regime_penalty,
+        lucky_spike_penalty=lucky_spike_penalty,
         episodes=episode_results,
         regime_coverage=regime_coverage,
         n_trades_per_episode=n_trades_list,
     )
+
+
+def _compute_lucky_spike_penalty(fitnesses: List[float]) -> float:
+    """Penalty if best episode dominates total positive fitness.
+
+    Applied when the single best episode accounts for more than 60% of the
+    total positive fitness across all episodes.  This catches strategies
+    that look good only because of one lucky window.
+    """
+    positive = [f for f in fitnesses if f > 0]
+    if len(positive) < 2:
+        return 0.0
+    total_positive = sum(positive)
+    if total_positive <= 0:
+        return 0.0
+    best_share = max(positive) / total_positive
+    if best_share >= LUCKY_SPIKE_THRESHOLD:
+        return LUCKY_SPIKE_PENALTY
+    return 0.0
 
 
 def _compute_regime_coverage(episodes: List[RobustEpisodeResult]) -> Dict[str, Any]:
@@ -290,10 +314,17 @@ def _compute_regime_coverage(episodes: List[RobustEpisodeResult]) -> Dict[str, A
         str(k): v for k, v in per_regime_fitness.items()
     }
 
+    # Track year coverage
+    years_covered = set()
+    for ep in episodes:
+        years_covered.add(ep.episode_spec.start_ts.year)
+        years_covered.add(ep.episode_spec.end_ts.year)
+
     return {
         "unique_regimes": len(regime_counts),
         "regime_counts": regime_counts_serializable,
         "per_regime_fitness": per_regime_fitness_serializable,
+        "years_covered": sorted(years_covered),
     }
 
 

@@ -31,6 +31,7 @@ class RunStorage:
         (self.run_dir / "graphs").mkdir(exist_ok=True)
         (self.run_dir / "patches").mkdir(exist_ok=True)
         (self.run_dir / "evals").mkdir(exist_ok=True)
+        (self.run_dir / "phase3_reports").mkdir(exist_ok=True)
 
         # Lineage tracking
         self.lineage_file = self.run_dir / "lineage.jsonl"
@@ -74,6 +75,31 @@ class RunStorage:
         eval_path = self.run_dir / "evals" / f"{result.graph_id}.json"
         with open(eval_path, 'w') as f:
             json.dump(result.to_dict(), f, indent=2)
+
+    def save_phase3_report(self, result: StrategyEvaluationResult):
+        """Save Phase 3 report for a graph (if present in validation_report).
+
+        Extracts the 'phase3' sub-dict from the evaluation result and writes
+        it to ``phase3_reports/<graph_id>.json``.  No-ops if the result does
+        not contain Phase 3 data.
+        """
+        phase3_data = result.validation_report.get("phase3")
+        if not phase3_data:
+            return
+
+        report = {
+            "graph_id": result.graph_id,
+            "strategy_name": result.strategy_name,
+            "fitness": result.fitness,
+            "decision": result.decision,
+            "kill_reason": result.kill_reason,
+            "timestamp": result.validation_report.get("timestamp"),
+            "phase3": phase3_data,
+        }
+
+        report_path = self.run_dir / "phase3_reports" / f"{result.graph_id}.json"
+        with open(report_path, 'w') as f:
+            json.dump(report, f, indent=2, default=str)
 
     def append_lineage(
         self,

@@ -430,6 +430,128 @@ async def get_eval(run_id: str, graph_id: str):
         return json.load(f)
 
 
+@app.get("/api/runs/{run_id}/phase3/{graph_id}")
+async def get_phase3_report(run_id: str, graph_id: str):
+    """Get Phase 3 robustness report for a graph."""
+    report_file = config.RESULTS_DIR / "runs" / run_id / "phase3_reports" / f"{graph_id}.json"
+
+    if not report_file.exists():
+        raise HTTPException(status_code=404, detail="Phase 3 report not found")
+
+    with open(report_file) as f:
+        return json.load(f)
+
+
+# ============================================================================
+# Research Pack + Blue Memo + Red Verdict Endpoints
+# ============================================================================
+
+@app.post("/api/research/packs")
+async def create_research_pack(request: Request):
+    """Create a research pack from query or URL.
+
+    Request body: {
+        query?: string,
+        paper_url?: string,
+        title?: string,
+        n_results?: number (default 5)
+    }
+
+    Returns: { ok: true, pack: ResearchPackSummary }
+    """
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON body")
+
+    query = body.get("query")
+    paper_url = body.get("paper_url")
+    title = body.get("title")
+    n_results = body.get("n_results", 5)
+
+    # Build query from inputs
+    if query:
+        final_query = query
+    elif paper_url:
+        final_query = f"algorithmic trading strategies {paper_url}"
+    elif title:
+        final_query = f"algorithmic trading {title}"
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Must provide at least one of: query, paper_url, title",
+        )
+
+    # Create research pack
+    try:
+        from research.youcom import create_research_pack
+        from research.storage import ResearchStorage
+
+        pack = create_research_pack(final_query, n_results=n_results)
+        storage = ResearchStorage()
+        storage.save_research_pack(pack)
+
+        return {"ok": True, "pack": pack.model_dump()}
+
+    except ValueError as e:
+        # API key missing or validation error
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Failed to create research pack: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Research pack creation failed")
+
+
+@app.get("/api/research/packs/{pack_id}")
+async def get_research_pack(pack_id: str):
+    """Get research pack by ID.
+
+    Returns: { ok: true, pack: ResearchPack }
+    """
+    from research.storage import ResearchStorage
+
+    storage = ResearchStorage()
+    pack = storage.load_research_pack(pack_id)
+
+    if not pack:
+        raise HTTPException(status_code=404, detail="Research pack not found")
+
+    return {"ok": True, "pack": pack.model_dump()}
+
+
+@app.get("/api/runs/{run_id}/memos/{graph_id}")
+async def get_blue_memo(run_id: str, graph_id: str):
+    """Get Blue Memo (self-advocacy) for a graph.
+
+    Returns: { ok: true, memo: BlueMemo }
+    """
+    from research.storage import ResearchStorage
+
+    storage = ResearchStorage(run_id=run_id)
+    memo = storage.load_blue_memo(graph_id)
+
+    if not memo:
+        raise HTTPException(status_code=404, detail="Blue Memo not found")
+
+    return {"ok": True, "memo": memo.model_dump()}
+
+
+@app.get("/api/runs/{run_id}/verdicts/{graph_id}")
+async def get_red_verdict(run_id: str, graph_id: str):
+    """Get Red Verdict (overseer judgment) for a graph.
+
+    Returns: { ok: true, verdict: RedVerdict }
+    """
+    from research.storage import ResearchStorage
+
+    storage = ResearchStorage(run_id=run_id)
+    verdict = storage.load_red_verdict(graph_id)
+
+    if not verdict:
+        raise HTTPException(status_code=404, detail="Red Verdict not found")
+
+    return {"ok": True, "verdict": verdict.model_dump()}
+
+
 @app.get("/api/runs/{run_id}/llm/list")
 async def list_run_llm_transcripts(run_id: str):
     """List stored LLM transcripts for a run."""

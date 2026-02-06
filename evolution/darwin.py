@@ -8,13 +8,16 @@ from graph.schema import StrategyGraph, UniverseSpec, TimeConfig
 from validation.evaluation import (
     evaluate_strategy,
     evaluate_strategy_phase3,
+    apply_schedule_override,
     Phase3Config,
+    Phase3ScheduleConfig,
     StrategyEvaluationResult,
 )
 from llm import compile_nl_to_graph, propose_child_patches, create_results_summary
 from evolution.patches import apply_patch
 from evolution.population import prune_top_k, kill_stats_by_label, get_generation_stats
 from evolution.storage import RunStorage
+from research.integration import save_research_artifacts
 
 
 @dataclass
@@ -90,6 +93,15 @@ def run_darwin(
         'mutate_provider': mutate_provider,
         'rescue_mode': rescue_mode,
     }
+    # Include Phase 3 config for reproducibility
+    if phase3_config:
+        from dataclasses import asdict
+        p3_dict = asdict(phase3_config)
+        # Serialize schedule sub-config
+        if phase3_config.schedule:
+            p3_dict['schedule'] = phase3_config.schedule.to_dict()
+        # sampling_mode_schedule already serializes as list[str] via asdict
+        config_dict['phase3_config'] = p3_dict
     storage.save_config(config_dict)
 
     # Compile or use seed graph
@@ -135,20 +147,45 @@ def run_darwin(
 
     phase3_active = bool(phase3_config and phase3_config.enabled and phase3_config.mode == "episodes")
 
-    def _evaluate_target(graph):
+    # Resolve schedule: use explicit schedule, or default when Phase 3 active
+    schedule = None
+    if phase3_config and phase3_config.schedule:
+        schedule = phase3_config.schedule
+    elif phase3_active:
+        # Sensible default schedule when Phase 3 is on but no schedule provided
+        schedule = Phase3ScheduleConfig()
+
+    def _evaluate_target(graph, generation=0):
         if phase3_active:
-            return evaluate_strategy_phase3(
+            result = evaluate_strategy_phase3(
                 strategy=graph,
                 data=data,
                 initial_capital=initial_capital,
                 phase3_config=phase3_config,
+                generation=generation,
             )
-        return evaluate_strategy(graph, data, initial_capital=initial_capital)
+        else:
+            result = evaluate_strategy(graph, data, initial_capital=initial_capital)
+        # Apply schedule override (grace period, etc.)
+        if schedule:
+            result = apply_schedule_override(result, schedule, generation)
+        return result
 
-    # Evaluate Adam
+    # Evaluate Adam (generation 0)
     print(f"\n🔬 Evaluating Adam...")
-    adam_result = _evaluate_target(adam)
+    adam_result = _evaluate_target(adam, generation=0)
     storage.save_evaluation(adam_result)
+    if phase3_active:
+        storage.save_phase3_report(adam_result)
+        # Generate Blue Memo + Red Verdict
+        save_research_artifacts(
+            run_id=run_id,
+            evaluation_result=adam_result,
+            phase3_config=phase3_config,
+            parent_graph_id=None,
+            generation=0,
+            patch=None,
+        )
 
     print(f"✓ Adam: {adam_result.decision.upper()} (fitness={adam_result.fitness:.3f})")
 
@@ -159,8 +196,8 @@ def run_darwin(
     # Store graph mapping for parent lookup
     graph_map = {adam.graph_id: adam}
 
-    # Check if Adam survived
-    if not adam_result.is_survivor():
+    # Check if Adam survived (or can mutate via grace period)
+    if not adam_result.is_survivor() and not adam_result.can_mutate():
         print(f"⚠️  Adam was KILLED: {', '.join(adam_result.kill_reason)}")
         if not rescue_mode:
             print("❌ Rescue mode disabled - cannot evolve killed strategies")
@@ -170,6 +207,9 @@ def run_darwin(
             )
         else:
             print("🔧 Rescue mode enabled - attempting mutations anyway...")
+    elif adam_result.decision == "mutate_only":
+        print(f"⚠️  Adam was KILLED but in grace period - allowing mutations"
+              f" (labels: {', '.join(adam_result.kill_reason)})")
 
     # Current generation (starts with Adam)
     current_gen = [adam_result]
@@ -180,8 +220,10 @@ def run_darwin(
         print(f"GENERATION {gen+1}/{depth}")
         print(f"{'='*80}")
 
-        # Select parents (top survivors_per_layer)
-        parents = prune_top_k(current_gen, survivors_per_layer)
+        # Select parents: survivors + mutate_only (grace period) strategies
+        mutable = [r for r in current_gen if r.can_mutate()]
+        mutable_ranked = sorted(mutable, key=lambda r: r.fitness, reverse=True)
+        parents = mutable_ranked[:survivors_per_layer]
 
         # SURVIVOR FLOOR: If no survivors, force-select top N by fitness (even if killed)
         survivor_floor_triggered = False
@@ -293,9 +335,20 @@ def run_darwin(
                     storage.save_graph(child)
                     storage.save_patch(patch)
 
-                    # Evaluate child
-                    child_result = _evaluate_target(child)
+                    # Evaluate child (pass generation index for schedule)
+                    child_result = _evaluate_target(child, generation=gen)
                     storage.save_evaluation(child_result)
+                    if phase3_active:
+                        storage.save_phase3_report(child_result)
+                        # Generate Blue Memo + Red Verdict
+                        save_research_artifacts(
+                            run_id=run_id,
+                            evaluation_result=child_result,
+                            phase3_config=phase3_config,
+                            parent_graph_id=parent_result.graph_id,
+                            generation=gen,
+                            patch=patch,
+                        )
                     all_evaluations.append(child_result)
 
                     # Log lineage
@@ -369,6 +422,7 @@ def _build_summary(
         kill_stats=kill_stats,
         generation_stats=generation_stats,
         total_evals=len(all_evaluations),
+        extra={"best_fitness": best_strategy.fitness if best_strategy else None},
     )
 
     print(f"\n💾 Results saved to: {storage.run_dir}")
