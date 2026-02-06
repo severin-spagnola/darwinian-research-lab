@@ -141,10 +141,10 @@ export default function Layout({
   return (
     <div className="flex h-screen flex-col bg-bg">
       <header className="border-b border-border/70 bg-panel">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+        <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-3 px-3 py-2 sm:px-4">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-primary-500/15 ring-1 ring-inset ring-primary-500/25">
-              <Dna className="h-5 w-5 text-primary-200" />
+            <div className="grid h-9 w-9 place-items-center rounded-2xl bg-primary-500/15 ring-1 ring-inset ring-primary-500/25">
+              <Dna className="h-4 w-4 text-primary-200" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
@@ -171,8 +171,8 @@ export default function Layout({
 
       {/* On small screens, allow the page to scroll so the right column panels aren't clipped. */}
       <div className="flex-1 overflow-auto">
-        <div className="mx-auto min-h-full max-w-7xl px-4 py-3 sm:px-6">
-          <div className="grid h-auto min-h-0 grid-cols-1 gap-3 lg:h-full lg:grid-cols-5">
+        <div className="mx-auto min-h-full max-w-screen-2xl px-2 py-2 sm:px-4">
+          <div className="grid h-auto min-h-0 grid-cols-1 gap-2 lg:h-full lg:grid-cols-5">
             <section
               className={`panel ${panelChrome} flex min-h-0 flex-col overflow-hidden lg:col-span-3`}
             >
@@ -187,7 +187,7 @@ export default function Layout({
                         type="button"
                         onClick={() => setTab(t.key)}
                         className={[
-                          'inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition',
+                          'inline-flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-semibold transition',
                           'focus:outline-none focus:ring-2 focus:ring-primary-500/30',
                           active
                             ? 'bg-primary-500/12 text-primary-200 ring-1 ring-inset ring-primary-500/25'
@@ -195,7 +195,7 @@ export default function Layout({
                         ].join(' ')}
                         aria-pressed={active}
                       >
-                        <Icon className="h-4 w-4" />
+                        <Icon className="h-3.5 w-3.5" />
                         {t.label}
                       </button>
                     )
@@ -237,7 +237,7 @@ export default function Layout({
               </div>
             </section>
 
-            <aside className="flex min-h-0 flex-col gap-3 lg:col-span-2">
+            <aside className="flex min-h-0 flex-col gap-2 lg:col-span-2">
               <section className={`panel ${panelChrome} flex flex-col overflow-hidden`}>
                 <div className="panel-header">
                   <div className="flex items-center gap-2">
@@ -330,7 +330,7 @@ export default function Layout({
       </div>
 
       <footer className="border-t border-border/70 bg-panel">
-        <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6">
+        <div className="mx-auto max-w-screen-2xl px-3 py-1.5 sm:px-4">
           <Controls
             isPlaying={isPlaying}
             onPlayPause={onPlayPause}

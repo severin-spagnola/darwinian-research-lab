@@ -69,11 +69,11 @@
   }
 
   .panel-header {
-    @apply flex items-center justify-between gap-3 border-b border-border/60 px-4 py-3;
+    @apply flex items-center justify-between gap-2 border-b border-border/60 px-3 py-2;
   }
 
   .panel-body {
-    @apply px-4 py-4;
+    @apply px-3 py-3;
   }
 
   /* React Flow (XYFlow) dark theme polish */

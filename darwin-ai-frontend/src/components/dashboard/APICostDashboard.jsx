@@ -456,7 +456,7 @@ export default function APICostDashboard({
           }}
           transition={{ duration: 0.55, ease: 'easeOut' }}
           className={[
-            'rounded-2xl border border-border/60 bg-panel-elevated p-4',
+            'rounded-2xl border border-border/60 bg-panel-elevated p-3',
             overBudget ? 'ring-1 ring-inset ring-danger-500/20' : '',
           ].join(' ')}
         >
@@ -493,7 +493,7 @@ export default function APICostDashboard({
             </div>
           </div>
 
-          <div className="mt-4 text-xs text-text-muted">
+          <div className="mt-3 text-xs text-text-muted">
             Last tick:{' '}
             <span className="font-mono text-text">
               {live.lastTick > 0 ? `+${usd(live.lastTick)}` : usd(0)}
@@ -501,7 +501,7 @@ export default function APICostDashboard({
           </div>
         </MotionDiv>
 
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_22px_rgba(16,185,129,0.06)]">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.05)]">
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-xs font-semibold tracking-wide text-text-subtle">
@@ -528,7 +528,7 @@ export default function APICostDashboard({
             </div>
           </div>
 
-          <div className="mt-3 rounded-2xl border border-border/60 bg-panel p-4 text-xs text-text-muted">
+          <div className="mt-3 rounded-2xl border border-border/60 bg-panel p-3 text-xs text-text-muted">
             Method:{' '}
             <span className="font-semibold text-text">{estimate.method.used}</span>{' '}
             = <span className="font-mono text-text">{usd(estimate.method.baselinePerGen)}</span> per gen
@@ -549,11 +549,11 @@ export default function APICostDashboard({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_22px_rgba(16,185,129,0.06)]">
+      <div className="rounded-2xl border border-border/60 bg-panel-elevated p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.05)]">
         <div className="text-sm font-semibold text-text">BREAKDOWN</div>
         <div className="mt-3 grid gap-3">
           {breakdownRows.map((r) => (
-            <div key={r.key} className="rounded-2xl border border-border/60 bg-panel p-4">
+            <div key={r.key} className="rounded-2xl border border-border/60 bg-panel p-3">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="text-sm font-semibold text-text">{r.label}</div>
@@ -589,7 +589,7 @@ export default function APICostDashboard({
       </div>
 
       <div className="grid gap-3 lg:grid-cols-2">
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_22px_rgba(16,185,129,0.06)]">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.05)]">
           <div className="flex items-center justify-between gap-3">
             <div className="text-sm font-semibold text-text">COST PER GENERATION</div>
             <div className="text-xs text-text-muted">
@@ -632,7 +632,7 @@ export default function APICostDashboard({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_22px_rgba(16,185,129,0.06)]">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.05)]">
           <div className="flex items-center justify-between gap-3">
             <div className="text-sm font-semibold text-text">RUNNING TOTAL</div>
             <div className="text-xs text-text-muted">

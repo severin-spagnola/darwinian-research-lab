@@ -273,7 +273,7 @@ export default function StrategyCard({
       }}
       onClick={() => onSelect?.(strategy)}
       className={[
-        'group relative cursor-pointer select-none overflow-hidden rounded-2xl border bg-panel-elevated p-4',
+        'group relative cursor-pointer select-none overflow-hidden rounded-2xl border bg-panel-elevated p-3',
         'transition-[border-color,transform,filter] duration-200',
         'focus-within:outline-none',
         borderClass,
@@ -354,7 +354,7 @@ export default function StrategyCard({
       {/* Hover tooltip overlay (kept inside card to avoid clipping) */}
       <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
         <div className="absolute inset-0 bg-bg/85 backdrop-blur-sm" />
-        <div className="relative h-full p-4">
+        <div className="relative h-full p-3">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="truncate text-sm font-semibold">{title}</div>

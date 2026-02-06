@@ -18,7 +18,6 @@ import { generateEvolutionRun } from './data/mockDataGenerator.js'
 import {
   listRuns,
   getRunSummary,
-  getRunLineage,
   getRunLLMUsage,
 } from './api/client.js'
 
@@ -80,7 +79,6 @@ export default function App() {
   // Try to load real data from backend; fall back to mock if unavailable
   const [useRealData, setUseRealData] = useState(null) // null = checking
   const [realRunData, setRealRunData] = useState(null)
-  const [realLineage, setRealLineage] = useState(null)
   const [realLlmUsage, setRealLlmUsage] = useState(null)
   const [selectedRunId, setSelectedRunId] = useState(null)
   const [availableRuns, setAvailableRuns] = useState([])
@@ -124,14 +122,12 @@ export default function App() {
 
     async function load() {
       try {
-        const [summary, lineage, usage] = await Promise.all([
+        const [summary, usage] = await Promise.all([
           getRunSummary(selectedRunId),
-          getRunLineage(selectedRunId),
           getRunLLMUsage(selectedRunId).catch(() => null),
         ])
         if (cancelled) return
         setRealRunData(summary)
-        setRealLineage(lineage)
         setRealLlmUsage(usage)
       } catch (err) {
         console.error('Failed to load run data:', err)

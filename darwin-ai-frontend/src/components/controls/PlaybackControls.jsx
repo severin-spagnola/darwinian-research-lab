@@ -48,7 +48,7 @@ export default function PlaybackControls({
           type="button"
           onClick={onPlayPause}
           className={[
-            'relative inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold transition',
+            'relative inline-flex items-center gap-2 rounded-2xl px-3.5 py-1.5 text-sm font-semibold transition',
             'focus:outline-none focus:ring-2 focus:ring-primary-500/30',
             'ring-1 ring-inset',
             playTone,
@@ -81,7 +81,7 @@ export default function PlaybackControls({
           onClick={onNextGeneration}
           disabled={!onNextGeneration}
           className={[
-            'inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold transition',
+            'inline-flex items-center gap-2 rounded-2xl px-3.5 py-1.5 text-sm font-semibold transition',
             'focus:outline-none focus:ring-2 focus:ring-info-500/25',
             'ring-1 ring-inset ring-border/70',
             onNextGeneration ? 'bg-panel-elevated text-text hover:bg-white/5' : 'bg-panel text-text-subtle opacity-60',
@@ -101,7 +101,7 @@ export default function PlaybackControls({
                 type="button"
                 onClick={() => onSpeedChange?.(s)}
                 className={[
-                  'rounded-xl px-3 py-2 text-xs font-semibold transition',
+                  'rounded-xl px-2.5 py-1.5 text-xs font-semibold transition',
                   active
                     ? 'bg-info-500/14 text-info-200 ring-1 ring-inset ring-info-500/25'
                     : 'text-text-muted hover:bg-white/5 hover:text-text',

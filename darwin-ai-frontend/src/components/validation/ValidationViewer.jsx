@@ -396,7 +396,7 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
       transition={{ duration: 0.18, ease: 'easeOut' }}
       className="overflow-hidden rounded-2xl border border-border/60 bg-panel-elevated shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_22px_rgba(16,185,129,0.06)]"
     >
-      <div className="border-b border-border/60 px-4 py-4">
+      <div className="border-b border-border/60 px-3 py-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="text-xs font-semibold tracking-wide text-text-subtle">
@@ -488,7 +488,7 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
         </div>
       </div>
 
-      <div className="border-b border-border/60 px-4 py-4">
+      <div className="border-b border-border/60 px-3 py-3">
         <div className="flex items-center justify-between gap-3">
           <div className="text-sm font-semibold text-text">
             EPISODES <span className="text-text-muted">({episodes.length} tested)</span>
@@ -498,7 +498,7 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
           </div>
         </div>
 
-        <div className="mt-3 grid gap-3">
+        <div className="mt-3 grid gap-2">
           <AnimatePresence initial={false}>
             {episodes.map((ep, idx) => (
               <EpisodeCard
@@ -512,7 +512,7 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
         </div>
       </div>
 
-      <div className="px-4 py-4">
+      <div className="px-3 py-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <div className="text-xs font-semibold tracking-wide text-text-subtle">

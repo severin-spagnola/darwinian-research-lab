@@ -391,7 +391,7 @@ export default function MetricsDashboard({
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_14px_rgba(16,185,129,0.05)]">
           <div className="flex items-center justify-between">
             <div className="text-sm font-semibold text-text">Population</div>
             <div className="font-mono text-xs text-text-muted">
@@ -421,7 +421,7 @@ export default function MetricsDashboard({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_14px_rgba(16,185,129,0.05)]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-semibold text-text">
               <Skull className="h-4 w-4 text-danger-200" />
@@ -454,7 +454,7 @@ export default function MetricsDashboard({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
+      <div className="rounded-2xl border border-border/60 bg-panel-elevated p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_14px_rgba(16,185,129,0.05)]">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 text-sm font-semibold text-text">
             <Award className="h-4 w-4 text-warning-200" />
@@ -498,7 +498,7 @@ export default function MetricsDashboard({
       </div>
 
       <div className="grid gap-3 lg:grid-cols-2">
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_14px_rgba(16,185,129,0.05)]">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm font-semibold text-text">
               <GitCommitHorizontal className="h-4 w-4 text-info-200" />
@@ -546,7 +546,7 @@ export default function MetricsDashboard({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_14px_rgba(16,185,129,0.05)]">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm font-semibold text-text">
               <Target className="h-4 w-4 text-primary-200" />
@@ -583,7 +583,7 @@ export default function MetricsDashboard({
 
       {/* Selected strategy details */}
       {selectedStrategy && strat ? (
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-3 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_14px_rgba(16,185,129,0.05)]">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
               <div className="text-xs font-semibold tracking-wide text-text-subtle">
