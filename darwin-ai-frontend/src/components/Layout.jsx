@@ -1,4 +1,4 @@
-import { Children, isValidElement, useEffect, useMemo, useState } from 'react'
+import { Children, isValidElement, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Activity,
@@ -6,6 +6,7 @@ import {
   ChevronUp,
   CircleDollarSign,
   Dna,
+  GripVertical,
   GitBranch,
   LayoutGrid,
   Network,
@@ -37,6 +38,10 @@ function formatTime(d) {
 }
 
 const MotionDiv = motion.div
+
+function clamp(n, min, max) {
+  return Math.min(max, Math.max(min, n))
+}
 
 function extractSlots(children) {
   const slots = {
@@ -78,6 +83,25 @@ export default function Layout({
   const [uncontrolledTab, setUncontrolledTab] = useState('arena')
   const [isFeedOpen, setIsFeedOpen] = useState(true)
   const [now, setNow] = useState(() => new Date())
+  const [isLgUp, setIsLgUp] = useState(() => {
+    if (typeof window === 'undefined') return true
+    return window.matchMedia('(min-width: 1024px)').matches
+  })
+
+  const [split, setSplit] = useState(() => {
+    // Split ratio for left panel (0..1). Persisted for a better demo UX.
+    if (typeof window === 'undefined') return 0.62
+    const raw = window.localStorage.getItem('darwin.layout.split')
+    const v = raw ? Number(raw) : 0.62
+    return Number.isFinite(v) ? clamp(v, 0.45, 0.8) : 0.62
+  })
+
+  const dragRef = useRef({
+    dragging: false,
+    startX: 0,
+    startSplit: 0.62,
+  })
+  const containerRef = useRef(null)
 
   const tabKey = activeLeftTab ?? uncontrolledTab
   const setTab =
@@ -91,6 +115,24 @@ export default function Layout({
     const t = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(t)
   }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return () => {}
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const onChange = () => setIsLgUp(mq.matches)
+    onChange()
+    if (typeof mq.addEventListener === 'function') {
+      mq.addEventListener('change', onChange)
+      return () => mq.removeEventListener('change', onChange)
+    }
+    mq.addListener(onChange)
+    return () => mq.removeListener(onChange)
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    window.localStorage.setItem('darwin.layout.split', String(split))
+  }, [split])
 
   const slots = useMemo(() => extractSlots(children), [children])
   const hasAnySlot = useMemo(
@@ -138,6 +180,49 @@ export default function Layout({
   const panelChrome =
     'shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_24px_rgba(16,185,129,0.06)] ring-1 ring-inset ring-info-500/10 transition-shadow'
 
+  const leftFlexStyle = useMemo(() => {
+    if (!isLgUp) return undefined
+    return { flexGrow: split, flexBasis: 0 }
+  }, [isLgUp, split])
+
+  const rightFlexStyle = useMemo(() => {
+    if (!isLgUp) return undefined
+    return { flexGrow: 1 - split, flexBasis: 0 }
+  }, [isLgUp, split])
+
+  const beginResize = (e) => {
+    if (!isLgUp) return
+    const container = containerRef.current
+    if (!container) return
+
+    dragRef.current.dragging = true
+    dragRef.current.startX = e.clientX
+    dragRef.current.startSplit = split
+
+    // Capture pointer so drag continues even if leaving the handle.
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+  }
+
+  const moveResize = (e) => {
+    if (!dragRef.current.dragging) return
+    const container = containerRef.current
+    if (!container) return
+    const rect = container.getBoundingClientRect()
+    const dx = e.clientX - dragRef.current.startX
+    const next = dragRef.current.startSplit + dx / Math.max(1, rect.width)
+    setSplit(clamp(next, 0.45, 0.8))
+  }
+
+  const endResize = () => {
+    if (!dragRef.current.dragging) return
+    dragRef.current.dragging = false
+    document.body.style.cursor = ''
+    document.body.style.userSelect = ''
+  }
+
   return (
     <div className="flex h-screen flex-col bg-bg">
       <header className="border-b border-border/70 bg-panel">
@@ -172,9 +257,13 @@ export default function Layout({
       {/* On small screens, allow the page to scroll so the right column panels aren't clipped. */}
       <div className="flex-1 overflow-auto">
         <div className="mx-auto min-h-full max-w-screen-2xl px-2 py-2 sm:px-4">
-          <div className="grid h-auto min-h-0 grid-cols-1 gap-2 lg:h-full lg:grid-cols-5">
+          <div
+            ref={containerRef}
+            className="flex h-auto min-h-0 flex-col gap-2 lg:h-full lg:flex-row lg:items-stretch"
+          >
             <section
-              className={`panel ${panelChrome} flex min-h-0 flex-col overflow-hidden lg:col-span-3`}
+              style={leftFlexStyle}
+              className={`panel ${panelChrome} flex min-h-0 flex-col overflow-hidden lg:min-w-[520px]`}
             >
               <div className="panel-header">
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -237,7 +326,32 @@ export default function Layout({
               </div>
             </section>
 
-            <aside className="flex min-h-0 flex-col gap-2 lg:col-span-2">
+            {/* Resize handle (desktop only) */}
+            <div className="relative hidden w-3 items-stretch lg:flex">
+              <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border/60" />
+              <button
+                type="button"
+                aria-label="Resize panels"
+                title="Drag to resize panels"
+                onPointerDown={beginResize}
+                onPointerMove={moveResize}
+                onPointerUp={endResize}
+                onPointerCancel={endResize}
+                onDoubleClick={() => setSplit(0.62)}
+                className={[
+                  'group relative z-10 flex w-full items-center justify-center',
+                  'cursor-col-resize rounded-xl transition',
+                  'hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-info-500/20',
+                ].join(' ')}
+              >
+                <GripVertical className="h-5 w-5 text-text-muted/70 transition group-hover:text-text-muted" />
+              </button>
+            </div>
+
+            <aside
+              style={rightFlexStyle}
+              className="flex min-h-0 flex-col gap-2 lg:min-w-[360px]"
+            >
               <section className={`panel ${panelChrome} flex flex-col overflow-hidden`}>
                 <div className="panel-header">
                   <div className="flex items-center gap-2">
