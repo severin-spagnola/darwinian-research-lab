@@ -1,0 +1,189 @@
+2026-01-29 07:35:24,145 - __main__ - INFO - HTTP 422 POST /api/run from 127.0.0.1 (UA=python-requests/2.32.5) in 0.003s
+2026-01-29 07:35:41,095 - __main__ - INFO - Received request to start run 20260129_073541
+2026-01-29 07:35:41,095 - __main__ - INFO - Request: nl_text length=323, symbols=['AAPL'], timeframe=5m, dates=2024-10-01 to 2024-12-31, depth=2, branching=2, max_evals=10
+2026-01-29 07:35:41,095 - __main__ - INFO - Initialized job tracking for 20260129_073541
+2026-01-29 07:35:41,095 - __main__ - INFO - Added background task for 20260129_073541
+2026-01-29 07:35:41,097 - __main__ - INFO - Starting Darwin job 20260129_073541
+2026-01-29 07:35:41,097 - __main__ - INFO - Request params: symbols=['AAPL'], timeframe=5m, depth=2
+2026-01-29 07:35:41,097 - __main__ - INFO - [20260129_073541] Emitted run_started event
+2026-01-29 07:35:41,097 - __main__ - INFO - [20260129_073541] Initializing Polygon client
+2026-01-29 07:35:41,097 - __main__ - INFO - [20260129_073541] Fetching data for AAPL
+2026-01-29 07:35:42,376 - __main__ - INFO - [20260129_073541] Successfully fetched 11450 bars for AAPL
+2026-01-29 07:35:42,376 - __main__ - INFO - [20260129_073541] Using AAPL data for evolution
+2026-01-29 07:35:42,376 - __main__ - INFO - [20260129_073541] Resetting LLM budget
+2026-01-29 07:35:42,376 - __main__ - INFO - [20260129_073541] Created universe and time config
+2026-01-29 07:35:42,376 - __main__ - INFO - [20260129_073541] Starting Darwin evolution
+2026-01-29 07:35:42,376 - __main__ - INFO - [20260129_073541] run_darwin_with_events called with kwargs: ['data', 'universe', 'time_config', 'nl_text', 'depth', 'branching', 'survivors_per_layer', 'max_total_evals']
+2026-01-29 07:35:42,376 - __main__ - INFO - [20260129_073541] Calling run_darwin
+2026-01-29 07:35:59,490 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-29 07:36:02,714 - __main__ - INFO - [20260129_073541] run_darwin returned successfully
+2026-01-29 07:36:02,714 - __main__ - INFO - [20260129_073541] Darwin evolution completed. Total evals: 1
+2026-01-29 07:36:02,714 - __main__ - INFO - [20260129_073541] Budget: 1 calls, 2655 tokens
+2026-01-29 07:36:02,714 - __main__ - INFO - [20260129_073541] Job completed successfully. Best fitness: -0.849
+2026-01-29 07:36:29,944 - __main__ - INFO - Received request to start run 20260129_073629
+2026-01-29 07:36:29,950 - __main__ - INFO - Request: nl_text length=323, symbols=['AAPL'], timeframe=5m, dates=2024-10-01 to 2024-12-31, depth=2, branching=2, max_evals=10
+2026-01-29 07:36:29,950 - __main__ - INFO - Initialized job tracking for 20260129_073629
+2026-01-29 07:36:29,950 - __main__ - INFO - Added background task for 20260129_073629
+2026-01-29 07:36:29,952 - __main__ - INFO - Starting Darwin job 20260129_073629
+2026-01-29 07:36:29,952 - __main__ - INFO - Request params: symbols=['AAPL'], timeframe=5m, depth=2
+2026-01-29 07:36:29,952 - __main__ - INFO - [20260129_073629] Emitted run_started event
+2026-01-29 07:36:29,952 - __main__ - INFO - [20260129_073629] Initializing Polygon client
+2026-01-29 07:36:29,952 - __main__ - INFO - [20260129_073629] Fetching data for AAPL
+2026-01-29 07:36:30,004 - __main__ - INFO - [20260129_073629] Successfully fetched 11450 bars for AAPL
+2026-01-29 07:36:30,005 - __main__ - INFO - [20260129_073629] Using AAPL data for evolution
+2026-01-29 07:36:30,005 - __main__ - INFO - [20260129_073629] Resetting LLM budget
+2026-01-29 07:36:30,005 - __main__ - INFO - [20260129_073629] Created universe and time config
+2026-01-29 07:36:30,005 - __main__ - INFO - [20260129_073629] Starting Darwin evolution
+2026-01-29 07:36:30,005 - __main__ - INFO - [20260129_073629] run_darwin_with_events called with kwargs: ['data', 'universe', 'time_config', 'nl_text', 'depth', 'branching', 'survivors_per_layer', 'max_total_evals']
+2026-01-29 07:36:30,005 - __main__ - INFO - [20260129_073629] Calling run_darwin
+2026-01-29 07:36:32,970 - __main__ - INFO - [20260129_073629] run_darwin returned successfully
+2026-01-29 07:36:32,970 - __main__ - INFO - [20260129_073629] Darwin evolution completed. Total evals: 1
+2026-01-29 07:36:32,970 - __main__ - INFO - [20260129_073629] Budget: 0 calls, 0 tokens
+2026-01-29 07:36:32,970 - __main__ - INFO - [20260129_073629] Job completed successfully. Best fitness: -0.619
+2026-01-29 07:40:02,251 - __main__ - INFO - Received request to start run 20260129_074002
+2026-01-29 07:40:02,251 - __main__ - INFO - Request: nl_text length=323, symbols=['AAPL'], timeframe=5m, dates=2024-10-01 to 2024-12-31, depth=2, branching=2, max_evals=10
+2026-01-29 07:40:02,251 - __main__ - INFO - Initialized job tracking for 20260129_074002
+2026-01-29 07:40:02,251 - __main__ - INFO - Added background task for 20260129_074002
+2026-01-29 07:40:02,251 - __main__ - INFO - Starting Darwin job 20260129_074002
+2026-01-29 07:40:02,252 - __main__ - INFO - Request params: symbols=['AAPL'], timeframe=5m, depth=2
+2026-01-29 07:40:02,252 - __main__ - INFO - [20260129_074002] Emitted run_started event
+2026-01-29 07:40:02,252 - __main__ - INFO - [20260129_074002] Initializing Polygon client
+2026-01-29 07:40:02,252 - __main__ - INFO - [20260129_074002] Fetching data for AAPL
+2026-01-29 07:40:02,313 - __main__ - INFO - [20260129_074002] Successfully fetched 11450 bars for AAPL
+2026-01-29 07:40:02,313 - __main__ - INFO - [20260129_074002] Using AAPL data for evolution
+2026-01-29 07:40:02,313 - __main__ - INFO - [20260129_074002] Resetting LLM budget
+2026-01-29 07:40:02,313 - __main__ - INFO - [20260129_074002] Created universe and time config
+2026-01-29 07:40:02,313 - __main__ - INFO - [20260129_074002] Starting Darwin evolution
+2026-01-29 07:40:02,313 - __main__ - INFO - [20260129_074002] run_darwin_with_events called with kwargs: ['data', 'universe', 'time_config', 'nl_text', 'depth', 'branching', 'survivors_per_layer', 'max_total_evals']
+2026-01-29 07:40:02,314 - __main__ - INFO - [20260129_074002] Calling run_darwin
+2026-01-29 07:40:05,415 - __main__ - INFO - [20260129_074002] run_darwin returned successfully
+2026-01-29 07:40:05,415 - __main__ - INFO - [20260129_074002] Darwin evolution completed. Total evals: 1
+2026-01-29 07:40:05,415 - __main__ - INFO - [20260129_074002] Budget: 0 calls, 0 tokens
+2026-01-29 07:40:05,415 - __main__ - INFO - [20260129_074002] Job completed successfully. Best fitness: -0.840
+2026-01-29 07:42:38,330 - __main__ - INFO - Received request to start run 20260129_074238
+2026-01-29 07:42:38,331 - __main__ - INFO - Request: nl_text length=324, symbols=['AAPL'], timeframe=5m, dates=2024-10-01 to 2025-01-01, depth=3, branching=3, max_evals=50
+2026-01-29 07:42:38,331 - __main__ - INFO - Initialized job tracking for 20260129_074238
+2026-01-29 07:42:38,331 - __main__ - INFO - Added background task for 20260129_074238
+2026-01-29 07:42:38,332 - __main__ - INFO - Starting Darwin job 20260129_074238
+2026-01-29 07:42:38,332 - __main__ - INFO - Request params: symbols=['AAPL'], timeframe=5m, depth=3
+2026-01-29 07:42:38,332 - __main__ - INFO - [20260129_074238] Emitted run_started event
+2026-01-29 07:42:38,332 - __main__ - INFO - [20260129_074238] Initializing Polygon client
+2026-01-29 07:42:38,332 - __main__ - INFO - [20260129_074238] Fetching data for AAPL
+2026-01-29 07:42:38,345 - __main__ - INFO - [20260129_074238] Successfully fetched 11450 bars for AAPL
+2026-01-29 07:42:38,345 - __main__ - INFO - [20260129_074238] Using AAPL data for evolution
+2026-01-29 07:42:38,345 - __main__ - INFO - [20260129_074238] Resetting LLM budget
+2026-01-29 07:42:38,345 - __main__ - INFO - [20260129_074238] Created universe and time config
+2026-01-29 07:42:38,345 - __main__ - INFO - [20260129_074238] Starting Darwin evolution
+2026-01-29 07:42:38,345 - __main__ - INFO - [20260129_074238] run_darwin_with_events called with kwargs: ['data', 'universe', 'time_config', 'nl_text', 'depth', 'branching', 'survivors_per_layer', 'max_total_evals']
+2026-01-29 07:42:38,345 - __main__ - INFO - [20260129_074238] Calling run_darwin
+2026-01-29 07:42:41,311 - __main__ - INFO - [20260129_074238] run_darwin returned successfully
+2026-01-29 07:42:41,311 - __main__ - INFO - [20260129_074238] Darwin evolution completed. Total evals: 1
+2026-01-29 07:42:41,311 - __main__ - INFO - [20260129_074238] Budget: 0 calls, 0 tokens
+2026-01-29 07:42:41,311 - __main__ - INFO - [20260129_074238] Job completed successfully. Best fitness: -0.615
+2026-01-29 10:47:45,599 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 10:47:45,603 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.059s
+2026-01-29 10:47:45,618 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 10:47:45,619 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s
+2026-01-29 10:47:46,989 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 10:47:46,990 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.003s
+2026-01-29 10:47:46,997 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 10:47:46,998 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s
+2026-01-29 10:47:57,029 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 10:47:57,029 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s
+2026-01-29 10:47:57,032 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 10:47:57,032 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.000s
+2026-01-29 10:47:58,552 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074002/lineage_graph -> Not Found
+2026-01-29 10:47:58,554 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074002/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.003s
+2026-01-29 10:47:58,560 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074002/lineage_graph -> Not Found
+2026-01-29 10:47:58,560 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074002/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.003s
+2026-01-29 11:23:10,316 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 11:23:10,321 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.010s
+2026-01-29 11:23:10,327 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 11:23:10,328 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.002s
+2026-01-29 11:25:16,491 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 11:25:16,492 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.004s
+2026-01-29 11:25:16,500 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 11:25:16,500 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s
+2026-01-29 11:25:22,969 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 11:25:22,970 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.002s
+2026-01-29 11:25:22,974 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/lineage_graph -> Not Found
+2026-01-29 11:25:22,975 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/lineage_graph from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s
+2026-01-30 06:21:09,364 - __main__ - INFO - Received request to start run 20260130_062109
+2026-01-30 06:21:09,364 - __main__ - INFO - Request: nl_text length=234, symbols=['AAPL'], timeframe=5m, dates=2024-10-01 to 2024-12-31, depth=2, branching=2, max_evals=10
+2026-01-30 06:21:09,364 - __main__ - INFO - Initialized job tracking for 20260130_062109
+2026-01-30 06:21:09,364 - __main__ - INFO - Added background task for 20260130_062109
+2026-01-30 06:21:09,365 - __main__ - INFO - Starting Darwin job 20260130_062109
+2026-01-30 06:21:09,365 - __main__ - INFO - Request params: symbols=['AAPL'], timeframe=5m, depth=2
+2026-01-30 06:21:09,366 - __main__ - INFO - [20260130_062109] Emitted run_started event
+2026-01-30 06:21:09,366 - __main__ - INFO - [20260130_062109] Initializing Polygon client
+2026-01-30 06:21:09,366 - __main__ - INFO - [20260130_062109] Fetching data for AAPL
+2026-01-30 06:21:09,463 - __main__ - INFO - [20260130_062109] Successfully fetched 11450 bars for AAPL
+2026-01-30 06:21:09,463 - __main__ - INFO - [20260130_062109] Using AAPL data for evolution
+2026-01-30 06:21:09,463 - __main__ - INFO - [20260130_062109] Resetting LLM budget
+2026-01-30 06:21:09,464 - __main__ - INFO - [20260130_062109] Created universe and time config
+2026-01-30 06:21:09,464 - __main__ - INFO - [20260130_062109] Starting Darwin evolution
+2026-01-30 06:21:09,464 - __main__ - INFO - [20260130_062109] run_darwin_with_events called with kwargs: ['data', 'universe', 'time_config', 'nl_text', 'depth', 'branching', 'survivors_per_layer', 'max_total_evals']
+2026-01-30 06:21:09,464 - __main__ - INFO - [20260130_062109] Calling run_darwin
+2026-01-30 06:21:22,821 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-30 06:21:26,694 - __main__ - INFO - [20260130_062109] run_darwin returned successfully
+2026-01-30 06:21:26,694 - __main__ - INFO - [20260130_062109] Darwin evolution completed. Total evals: 1
+2026-01-30 06:21:26,694 - __main__ - INFO - [20260130_062109] Budget: 1 calls, 2794 tokens
+2026-01-30 06:21:26,694 - __main__ - INFO - [20260130_062109] Job completed successfully. Best fitness: -1.213
+2026-01-30 06:21:26,696 - __main__ - INFO - Received request to start run 20260130_062126
+2026-01-30 06:21:26,696 - __main__ - INFO - Request: nl_text length=234, symbols=['AAPL'], timeframe=5m, dates=2024-10-01 to 2024-12-31, depth=2, branching=2, max_evals=10
+2026-01-30 06:21:26,696 - __main__ - INFO - Initialized job tracking for 20260130_062126
+2026-01-30 06:21:26,696 - __main__ - INFO - Added background task for 20260130_062126
+2026-01-30 06:21:26,697 - __main__ - INFO - Starting Darwin job 20260130_062126
+2026-01-30 06:21:26,697 - __main__ - INFO - Request params: symbols=['AAPL'], timeframe=5m, depth=2
+2026-01-30 06:21:26,698 - __main__ - INFO - [20260130_062126] Emitted run_started event
+2026-01-30 06:21:26,698 - __main__ - INFO - [20260130_062126] Initializing Polygon client
+2026-01-30 06:21:26,698 - __main__ - INFO - [20260130_062126] Fetching data for AAPL
+2026-01-30 06:21:26,701 - __main__ - INFO - [20260130_062126] Successfully fetched 11450 bars for AAPL
+2026-01-30 06:21:26,701 - __main__ - INFO - [20260130_062126] Using AAPL data for evolution
+2026-01-30 06:21:26,701 - __main__ - INFO - [20260130_062126] Resetting LLM budget
+2026-01-30 06:21:26,701 - __main__ - INFO - [20260130_062126] Created universe and time config
+2026-01-30 06:21:26,701 - __main__ - INFO - [20260130_062126] Starting Darwin evolution
+2026-01-30 06:21:26,701 - __main__ - INFO - [20260130_062126] run_darwin_with_events called with kwargs: ['data', 'universe', 'time_config', 'nl_text', 'depth', 'branching', 'survivors_per_layer', 'max_total_evals']
+2026-01-30 06:21:26,701 - __main__ - INFO - [20260130_062126] Calling run_darwin
+2026-01-30 06:21:31,617 - __main__ - INFO - [20260130_062126] run_darwin returned successfully
+2026-01-30 06:21:31,618 - __main__ - INFO - [20260130_062126] Darwin evolution completed. Total evals: 1
+2026-01-30 06:21:31,618 - __main__ - INFO - [20260130_062126] Budget: 0 calls, 0 tokens
+2026-01-30 06:21:31,618 - __main__ - INFO - [20260130_062126] Job completed successfully. Best fitness: -1.051
+2026-01-30 06:24:02,116 - __main__ - INFO - Received request to start run 20260130_062402
+2026-01-30 06:24:02,117 - __main__ - INFO - Request: nl_text length=234, symbols=['AAPL'], timeframe=5m, dates=2024-10-01 to 2024-12-31, depth=2, branching=2, max_evals=10
+2026-01-30 06:24:02,118 - __main__ - INFO - Initialized job tracking for 20260130_062402
+2026-01-30 06:24:02,118 - __main__ - INFO - Added background task for 20260130_062402
+2026-01-30 06:24:02,118 - __main__ - INFO - Starting Darwin job 20260130_062402
+2026-01-30 06:24:02,118 - __main__ - INFO - Request params: symbols=['AAPL'], timeframe=5m, depth=2
+2026-01-30 06:24:02,119 - __main__ - INFO - [20260130_062402] Emitted run_started event
+2026-01-30 06:24:02,119 - __main__ - INFO - [20260130_062402] Initializing Polygon client
+2026-01-30 06:24:02,119 - __main__ - INFO - [20260130_062402] Fetching data for AAPL
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Successfully fetched 11450 bars for AAPL
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Using AAPL data for evolution
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Resetting LLM budget
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Created universe and time config
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Starting Darwin evolution
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] run_darwin_with_events called with kwargs: ['data', 'universe', 'time_config', 'nl_text', 'depth', 'branching', 'survivors_per_layer', 'max_total_evals', 'run_id_param']
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Calling run_darwin
+2026-01-30 06:24:06,939 - __main__ - INFO - [20260130_062402] run_darwin returned successfully
+2026-01-30 06:24:06,939 - __main__ - INFO - [20260130_062402] Darwin evolution completed. Total evals: 1
+2026-01-30 06:24:06,939 - __main__ - INFO - [20260130_062402] Budget: 0 calls, 0 tokens
+2026-01-30 06:24:06,939 - __main__ - INFO - [20260130_062402] Job completed successfully. Best fitness: -1.078
+2026-01-30 13:56:44,468 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 13:56:44,470 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.009s
+2026-01-30 13:56:44,478 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 13:56:44,478 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.000s
+2026-01-30 13:56:44,494 - __main__ - WARNING - HTTP 404 GET /api/run/20260129_074238/events -> Run not found
+2026-01-30 13:56:44,494 - __main__ - INFO - HTTP 404 GET /api/run/20260129_074238/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.012s
+2026-01-30 13:57:32,799 - __main__ - WARNING - HTTP 404 GET /api/run/20260129_074238/events -> Run not found
+2026-01-30 13:57:32,800 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 13:57:32,803 - __main__ - INFO - HTTP 404 GET /api/run/20260129_074238/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.008s
+2026-01-30 13:57:32,803 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.008s
+2026-01-30 13:57:32,822 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 13:57:32,823 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s
+2026-01-30 14:14:04,208 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 14:14:04,212 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.021s
+2026-01-30 14:14:04,218 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 14:14:04,218 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s
+2026-01-30 14:14:04,224 - __main__ - WARNING - HTTP 404 GET /api/run/20260129_074238/events -> Run not found
+2026-01-30 14:14:04,224 - __main__ - INFO - HTTP 404 GET /api/run/20260129_074238/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s

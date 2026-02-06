@@ -1,0 +1,181 @@
+INFO:     Started server process [96526]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8050 (Press CTRL+C to quit)
+INFO:     127.0.0.1:51716 - "GET /api/runs/20260128_191337 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51717 - "GET /api/runs/20260128_191337/lineage HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51720 - "GET /api/runs/20260128_191337 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51722 - "GET /api/runs/20260128_191337/lineage HTTP/1.1" 200 OK
+2026-01-28 19:24:54,277 - __main__ - WARNING - HTTP 404 GET /api/run/20260128_191337/events -> Run not found
+2026-01-28 19:24:54,278 - __main__ - WARNING - HTTP 404 GET /api/run/20260128_191337/events -> Run not found
+2026-01-28 19:24:54,278 - __main__ - INFO - HTTP 404 GET /api/run/20260128_191337/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.002s
+INFO:     127.0.0.1:51727 - "GET /api/run/20260128_191337/events HTTP/1.1" 404 Not Found
+2026-01-28 19:24:54,279 - __main__ - INFO - HTTP 404 GET /api/run/20260128_191337/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.002s
+INFO:     127.0.0.1:51728 - "GET /api/run/20260128_191337/events HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59865 - "GET /api/runs/20260128_191337/lineage HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59866 - "GET /api/runs/20260128_191337 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59871 - "GET /api/runs/20260128_191337/lineage HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59873 - "GET /api/runs/20260128_191337 HTTP/1.1" 200 OK
+2026-01-28 20:36:56,665 - __main__ - WARNING - HTTP 404 GET /api/run/20260128_191337/events -> Run not found
+2026-01-28 20:36:56,667 - __main__ - INFO - HTTP 404 GET /api/run/20260128_191337/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.002s
+INFO:     127.0.0.1:59877 - "GET /api/run/20260128_191337/events HTTP/1.1" 404 Not Found
+2026-01-28 20:36:56,667 - __main__ - WARNING - HTTP 404 GET /api/run/20260128_191337/events -> Run not found
+2026-01-28 20:36:56,667 - __main__ - INFO - HTTP 404 GET /api/run/20260128_191337/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.000s
+INFO:     127.0.0.1:59879 - "GET /api/run/20260128_191337/events HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60402 - "GET /api/runs/20260128_191337 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60404 - "GET /api/runs/20260128_191337/lineage HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60407 - "GET /api/runs/20260128_191337 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60409 - "GET /api/runs/20260128_191337/lineage HTTP/1.1" 200 OK
+2026-01-28 20:58:18,837 - __main__ - WARNING - HTTP 404 GET /api/run/20260128_191337/events -> Run not found
+2026-01-28 20:58:18,838 - __main__ - INFO - HTTP 404 GET /api/run/20260128_191337/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.002s
+INFO:     127.0.0.1:60412 - "GET /api/run/20260128_191337/events HTTP/1.1" 404 Not Found
+2026-01-28 20:58:18,839 - __main__ - WARNING - HTTP 404 GET /api/run/20260128_191337/events -> Run not found
+2026-01-28 20:58:18,839 - __main__ - INFO - HTTP 404 GET /api/run/20260128_191337/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.000s
+INFO:     127.0.0.1:60415 - "GET /api/run/20260128_191337/events HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58913 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58915 - "GET /api/runs HTTP/1.1" 200 OK
+2026-01-29 07:23:26,506 - __main__ - INFO - Received request to start run 20260129_072326
+2026-01-29 07:23:26,508 - __main__ - INFO - Request: nl_text length=324, symbols=['AAPL'], timeframe=5m, dates=2024-10-01 to 2025-01-01, depth=3, branching=3, max_evals=50
+2026-01-29 07:23:26,508 - __main__ - INFO - Initialized job tracking for 20260129_072326
+2026-01-29 07:23:26,509 - __main__ - INFO - Added background task for 20260129_072326
+INFO:     127.0.0.1:58929 - "POST /api/run HTTP/1.1" 200 OK
+2026-01-29 07:23:26,510 - __main__ - INFO - Starting Darwin job 20260129_072326
+2026-01-29 07:23:26,510 - __main__ - INFO - Request params: symbols=['AAPL'], timeframe=5m, depth=3
+2026-01-29 07:23:26,510 - __main__ - INFO - [20260129_072326] Emitted run_started event
+2026-01-29 07:23:26,510 - __main__ - INFO - [20260129_072326] Initializing Polygon client
+2026-01-29 07:23:26,511 - __main__ - INFO - [20260129_072326] Fetching data for AAPL
+2026-01-29 07:23:26,822 - __main__ - INFO - [20260129_072326] Successfully fetched 11450 bars for AAPL
+2026-01-29 07:23:26,823 - __main__ - INFO - [20260129_072326] Using AAPL data for evolution
+2026-01-29 07:23:26,823 - __main__ - INFO - [20260129_072326] Resetting LLM budget
+2026-01-29 07:23:26,823 - __main__ - INFO - [20260129_072326] Created universe and time config
+2026-01-29 07:23:26,823 - __main__ - INFO - [20260129_072326] Starting Darwin evolution
+2026-01-29 07:23:26,824 - __main__ - INFO - [20260129_072326] run_darwin_with_events called with kwargs: ['data', 'universe', 'time_config', 'nl_text', 'depth', 'branching', 'survivors_per_layer', 'max_total_evals']
+2026-01-29 07:23:26,824 - __main__ - INFO - [20260129_072326] Calling run_darwin
+2026-01-29 07:23:26,865 - __main__ - ERROR - [20260129_072326] run_darwin failed: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+Traceback (most recent call last):
+  File "/Users/severinspagnola/Desktop/agentic_quant/backend_api/main.py", line 252, in run_darwin_with_events
+    result = run_darwin(**darwin_kwargs)
+  File "/Users/severinspagnola/Desktop/agentic_quant/evolution/darwin.py", line 106, in run_darwin
+    adam_result = evaluate_strategy(adam, data, initial_capital=initial_capital)
+  File "/Users/severinspagnola/Desktop/agentic_quant/validation/evaluation.py", line 99, in evaluate_strategy
+    validation_results = run_full_validation(
+        strategy=strategy,
+    ...<5 lines>...
+        initial_capital=initial_capital,
+    )
+  File "/Users/severinspagnola/Desktop/agentic_quant/validation/overfit_tests.py", line 310, in run_full_validation
+    train_results = run_backtest_on_data(strategy, train_data, initial_capital)
+  File "/Users/severinspagnola/Desktop/agentic_quant/validation/overfit_tests.py", line 59, in run_backtest_on_data
+    results = run_backtest(data=data, orders_config=orders_config, initial_capital=initial_capital)
+  File "/Users/severinspagnola/Desktop/agentic_quant/backtest/simulator.py", line 427, in run_backtest
+    return simulator.run(
+           ~~~~~~~~~~~~~^
+        data=data,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        risk_limits=risk_limits,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/severinspagnola/Desktop/agentic_quant/backtest/simulator.py", line 166, in run
+    atr_series = stop_config.get('atr') or tp_config.get('atr')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/severinspagnola/Desktop/agentic_quant/venv/lib/python3.14/site-packages/pandas/core/generic.py", line 1513, in __bool__
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+2026-01-29 07:23:26,872 - __main__ - ERROR - [20260129_072326] Job failed with error: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+Traceback (most recent call last):
+  File "/Users/severinspagnola/Desktop/agentic_quant/backend_api/main.py", line 329, in _run_darwin_job
+    summary = run_darwin_with_events(
+        run_id=run_id,
+    ...<8 lines>...
+        max_total_evals=request.max_total_evals,
+    )
+  File "/Users/severinspagnola/Desktop/agentic_quant/backend_api/main.py", line 252, in run_darwin_with_events
+    result = run_darwin(**darwin_kwargs)
+  File "/Users/severinspagnola/Desktop/agentic_quant/evolution/darwin.py", line 106, in run_darwin
+    adam_result = evaluate_strategy(adam, data, initial_capital=initial_capital)
+  File "/Users/severinspagnola/Desktop/agentic_quant/validation/evaluation.py", line 99, in evaluate_strategy
+    validation_results = run_full_validation(
+        strategy=strategy,
+    ...<5 lines>...
+        initial_capital=initial_capital,
+    )
+  File "/Users/severinspagnola/Desktop/agentic_quant/validation/overfit_tests.py", line 310, in run_full_validation
+    train_results = run_backtest_on_data(strategy, train_data, initial_capital)
+  File "/Users/severinspagnola/Desktop/agentic_quant/validation/overfit_tests.py", line 59, in run_backtest_on_data
+    results = run_backtest(data=data, orders_config=orders_config, initial_capital=initial_capital)
+  File "/Users/severinspagnola/Desktop/agentic_quant/backtest/simulator.py", line 427, in run_backtest
+    return simulator.run(
+           ~~~~~~~~~~~~~^
+        data=data,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        risk_limits=risk_limits,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/severinspagnola/Desktop/agentic_quant/backtest/simulator.py", line 166, in run
+    atr_series = stop_config.get('atr') or tp_config.get('atr')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/severinspagnola/Desktop/agentic_quant/venv/lib/python3.14/site-packages/pandas/core/generic.py", line 1513, in __bool__
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+2026-01-29 07:23:26,873 - __main__ - ERROR - [20260129_072326] Full traceback:
+Traceback (most recent call last):
+  File "/Users/severinspagnola/Desktop/agentic_quant/backend_api/main.py", line 329, in _run_darwin_job
+    summary = run_darwin_with_events(
+        run_id=run_id,
+    ...<8 lines>...
+        max_total_evals=request.max_total_evals,
+    )
+  File "/Users/severinspagnola/Desktop/agentic_quant/backend_api/main.py", line 252, in run_darwin_with_events
+    result = run_darwin(**darwin_kwargs)
+  File "/Users/severinspagnola/Desktop/agentic_quant/evolution/darwin.py", line 106, in run_darwin
+    adam_result = evaluate_strategy(adam, data, initial_capital=initial_capital)
+  File "/Users/severinspagnola/Desktop/agentic_quant/validation/evaluation.py", line 99, in evaluate_strategy
+    validation_results = run_full_validation(
+        strategy=strategy,
+    ...<5 lines>...
+        initial_capital=initial_capital,
+    )
+  File "/Users/severinspagnola/Desktop/agentic_quant/validation/overfit_tests.py", line 310, in run_full_validation
+    train_results = run_backtest_on_data(strategy, train_data, initial_capital)
+  File "/Users/severinspagnola/Desktop/agentic_quant/validation/overfit_tests.py", line 59, in run_backtest_on_data
+    results = run_backtest(data=data, orders_config=orders_config, initial_capital=initial_capital)
+  File "/Users/severinspagnola/Desktop/agentic_quant/backtest/simulator.py", line 427, in run_backtest
+    return simulator.run(
+           ~~~~~~~~~~~~~^
+        data=data,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        risk_limits=risk_limits,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/severinspagnola/Desktop/agentic_quant/backtest/simulator.py", line 166, in run
+    atr_series = stop_config.get('atr') or tp_config.get('atr')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/severinspagnola/Desktop/agentic_quant/venv/lib/python3.14/site-packages/pandas/core/generic.py", line 1513, in __bool__
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+Loading AAPL 5m from cache...
+
+🤖 Compiling NL strategy using openai...
+✓ Adam compiled: mean_reversion_rsi_atr
+
+🔬 Evaluating Adam...
+INFO:     127.0.0.1:58932 - "GET /api/runs/20260129_072326 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58935 - "GET /api/runs/20260129_072326/lineage HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58940 - "GET /api/runs/20260129_072326 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58942 - "GET /api/runs/20260129_072326/lineage HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58945 - "GET /api/run/20260129_072326/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59061 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59064 - "GET /api/runs HTTP/1.1" 200 OK

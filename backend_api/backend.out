@@ -1,0 +1,103 @@
+INFO:     Started server process [66601]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8050 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50961 - "GET /api/health HTTP/1.1" 200 OK
+2026-01-30 06:24:02,116 - __main__ - INFO - Received request to start run 20260130_062402
+2026-01-30 06:24:02,117 - __main__ - INFO - Request: nl_text length=234, symbols=['AAPL'], timeframe=5m, dates=2024-10-01 to 2024-12-31, depth=2, branching=2, max_evals=10
+2026-01-30 06:24:02,118 - __main__ - INFO - Initialized job tracking for 20260130_062402
+2026-01-30 06:24:02,118 - __main__ - INFO - Added background task for 20260130_062402
+INFO:     127.0.0.1:50999 - "POST /api/run HTTP/1.1" 200 OK
+2026-01-30 06:24:02,118 - __main__ - INFO - Starting Darwin job 20260130_062402
+2026-01-30 06:24:02,118 - __main__ - INFO - Request params: symbols=['AAPL'], timeframe=5m, depth=2
+2026-01-30 06:24:02,119 - __main__ - INFO - [20260130_062402] Emitted run_started event
+2026-01-30 06:24:02,119 - __main__ - INFO - [20260130_062402] Initializing Polygon client
+2026-01-30 06:24:02,119 - __main__ - INFO - [20260130_062402] Fetching data for AAPL
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Successfully fetched 11450 bars for AAPL
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Using AAPL data for evolution
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Resetting LLM budget
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Created universe and time config
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Starting Darwin evolution
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] run_darwin_with_events called with kwargs: ['data', 'universe', 'time_config', 'nl_text', 'depth', 'branching', 'survivors_per_layer', 'max_total_evals', 'run_id_param']
+2026-01-30 06:24:02,167 - __main__ - INFO - [20260130_062402] Calling run_darwin
+2026-01-30 06:24:06,939 - __main__ - INFO - [20260130_062402] run_darwin returned successfully
+2026-01-30 06:24:06,939 - __main__ - INFO - [20260130_062402] Darwin evolution completed. Total evals: 1
+2026-01-30 06:24:06,939 - __main__ - INFO - [20260130_062402] Budget: 0 calls, 0 tokens
+2026-01-30 06:24:06,939 - __main__ - INFO - [20260130_062402] Job completed successfully. Best fitness: -1.078
+Loading AAPL 5m from cache...
+
+🤖 Compiling NL strategy using openai...
+✓ Adam compiled: mean_reversion_rsi_atr
+
+🔬 Evaluating Adam...
+✓ Adam: KILL (fitness=-1.078)
+⚠️  Adam was KILLED: negative_fitness
+❌ Rescue mode disabled - cannot evolve killed strategies
+
+💾 Results saved to: /Users/severinspagnola/Desktop/agentic_quant/results/runs/20260130_062402
+INFO:     127.0.0.1:51205 - "GET /api/runs/20260130_062402 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50890 - "GET /api/runs/20260129_074238 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50891 - "GET /api/runs/20260129_074238/lineage_graph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50894 - "GET /api/runs/20260129_074238 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50895 - "GET /api/runs/20260129_074238/lineage_graph HTTP/1.1" 200 OK
+2026-01-30 13:56:44,468 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 13:56:44,470 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.009s
+INFO:     127.0.0.1:50897 - "GET /api/runs/20260129_074238/llm/usage HTTP/1.1" 404 Not Found
+2026-01-30 13:56:44,478 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 13:56:44,478 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.000s
+INFO:     127.0.0.1:50899 - "GET /api/runs/20260129_074238/llm/usage HTTP/1.1" 404 Not Found
+2026-01-30 13:56:44,494 - __main__ - WARNING - HTTP 404 GET /api/run/20260129_074238/events -> Run not found
+2026-01-30 13:56:44,494 - __main__ - INFO - HTTP 404 GET /api/run/20260129_074238/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.012s
+INFO:     127.0.0.1:50902 - "GET /api/run/20260129_074238/events HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50908 - "GET /api/runs/20260129_074238/evals/mean_reversion_rsi_atr HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50909 - "GET /api/runs/20260129_074238/graphs/mean_reversion_rsi_atr/fingerprint HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50911 - "GET /api/runs/20260129_074238/llm/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50915 - "GET /api/runs/20260129_074238/evals/mean_reversion_rsi_atr HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50917 - "GET /api/runs/20260129_074238/graphs/mean_reversion_rsi_atr/fingerprint HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50920 - "GET /api/runs/20260129_074238/llm/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51206 - "GET /api/runs/20260129_074238 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51208 - "GET /api/runs/20260129_074238/lineage_graph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51215 - "GET /api/runs/20260129_074238 HTTP/1.1" 200 OK
+2026-01-30 13:57:32,799 - __main__ - WARNING - HTTP 404 GET /api/run/20260129_074238/events -> Run not found
+2026-01-30 13:57:32,800 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+INFO:     127.0.0.1:51221 - "GET /api/runs/20260129_074238/lineage_graph HTTP/1.1" 200 OK
+2026-01-30 13:57:32,803 - __main__ - INFO - HTTP 404 GET /api/run/20260129_074238/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.008s
+INFO:     127.0.0.1:51222 - "GET /api/run/20260129_074238/events HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51223 - "GET /api/runs/20260129_074238/evals/mean_reversion_rsi_atr HTTP/1.1" 200 OK
+2026-01-30 13:57:32,803 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.008s
+INFO:     127.0.0.1:51224 - "GET /api/runs/20260129_074238/llm/usage HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51226 - "GET /api/runs/20260129_074238/graphs/mean_reversion_rsi_atr/fingerprint HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51228 - "GET /api/runs/20260129_074238/llm/list HTTP/1.1" 200 OK
+2026-01-30 13:57:32,822 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 13:57:32,823 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s
+INFO:     127.0.0.1:51234 - "GET /api/runs/20260129_074238/llm/usage HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51236 - "GET /api/runs/20260129_074238/evals/mean_reversion_rsi_atr HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51238 - "GET /api/runs/20260129_074238/llm/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51240 - "GET /api/runs/20260129_074238/graphs/mean_reversion_rsi_atr/fingerprint HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56809 - "GET /api/runs/20260129_074238 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56811 - "GET /api/runs/20260129_074238/lineage_graph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56815 - "GET /api/runs/20260129_074238/lineage_graph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56816 - "GET /api/runs/20260129_074238 HTTP/1.1" 200 OK
+2026-01-30 14:14:04,208 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 14:14:04,212 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.021s
+INFO:     127.0.0.1:56820 - "GET /api/runs/20260129_074238/llm/usage HTTP/1.1" 404 Not Found
+2026-01-30 14:14:04,218 - __main__ - WARNING - HTTP 404 GET /api/runs/20260129_074238/llm/usage -> Transcript not found
+2026-01-30 14:14:04,218 - __main__ - INFO - HTTP 404 GET /api/runs/20260129_074238/llm/usage from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s
+INFO:     127.0.0.1:56823 - "GET /api/runs/20260129_074238/llm/usage HTTP/1.1" 404 Not Found
+2026-01-30 14:14:04,224 - __main__ - WARNING - HTTP 404 GET /api/run/20260129_074238/events -> Run not found
+2026-01-30 14:14:04,224 - __main__ - INFO - HTTP 404 GET /api/run/20260129_074238/events from 127.0.0.1 (UA=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36) in 0.001s
+INFO:     127.0.0.1:56826 - "GET /api/run/20260129_074238/events HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56833 - "GET /api/runs/20260129_074238/graphs/mean_reversion_rsi_atr/fingerprint HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56836 - "GET /api/runs/20260129_074238/llm/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56837 - "GET /api/runs/20260129_074238/evals/mean_reversion_rsi_atr HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56844 - "GET /api/runs/20260129_074238/graphs/mean_reversion_rsi_atr/fingerprint HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56846 - "GET /api/runs/20260129_074238/llm/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56848 - "GET /api/runs/20260129_074238/evals/mean_reversion_rsi_atr HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49888 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49891 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49915 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49918 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51657 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51661 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52953 - "GET /api/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52955 - "GET /api/runs HTTP/1.1" 200 OK
