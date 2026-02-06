@@ -98,8 +98,10 @@ export default function App() {
         if (cancelled) return
 
         if (runs.length > 0) {
-          setAvailableRuns(runs)
-          setSelectedRunId(runs[0])
+          // runs are objects like {run_id: "...", summary: {...}}
+          const runIds = runs.map(r => r.run_id || r)
+          setAvailableRuns(runIds)
+          setSelectedRunId(runIds[0])
           setUseRealData(true)
         } else {
           // Backend up but no runs - use mock
