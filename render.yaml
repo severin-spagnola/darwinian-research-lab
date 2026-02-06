@@ -1,0 +1,42 @@
+# Render.com Blueprint for Agentic Quant Backend
+# Documentation: https://render.com/docs/blueprint-spec
+
+services:
+  # FastAPI Backend Service
+  - type: web
+    name: agentic-quant-backend
+    env: python
+    region: oregon
+    plan: starter  # Change to 'standard' or 'pro' for production
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend_api.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: YOUCOM_API_KEY
+        sync: false  # Set this manually in Render dashboard
+      - key: ANTHROPIC_API_KEY
+        sync: false  # Set this manually in Render dashboard (if using Claude for mutations)
+      - key: OPENAI_API_KEY
+        sync: false  # Set this manually in Render dashboard (if using OpenAI for mutations)
+      - key: PORT
+        value: 8050
+
+    # Persistent disk for results/cache
+    disk:
+      name: results-storage
+      mountPath: /opt/render/project/src/results
+      sizeGB: 10  # Adjust based on your needs (10GB, 20GB, etc.)
+
+    # Auto-deploy on push to main
+    autoDeploy: true
+
+    # Health check configuration
+    healthCheck:
+      enabled: true
+      path: /api/health
+      interval: 30s
+      timeout: 10s
+      unhealthyThreshold: 3
