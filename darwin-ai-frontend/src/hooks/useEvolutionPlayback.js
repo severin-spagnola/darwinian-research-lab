@@ -152,7 +152,10 @@ export default function useEvolutionPlayback(evolutionData, options) {
   }, [evolutionData])
 
   const [playbackSeed, setPlaybackSeed] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(() => {
+    const v = options?.initialIsPlaying
+    return v === undefined ? true : Boolean(v)
+  })
   const [playbackSpeed, setPlaybackSpeed] = useState(2)
 
   const [currentGeneration, setCurrentGeneration] = useState(0)
@@ -380,19 +383,21 @@ export default function useEvolutionPlayback(evolutionData, options) {
       const entryId = makeId('you')
       const startTs = new Date().toISOString()
 
-      setYouComActivity((prev) => [
-        {
-          id: entryId,
-          query,
-          timestamp: startTs,
-          status: 'loading',
-          results: [],
-          insights: [],
-          mutation_suggestions: [],
-          error: null,
-        },
-        ...(Array.isArray(prev) ? prev : []),
-      ])
+      setYouComActivity((prev) =>
+        [
+          ...(Array.isArray(prev) ? prev : []),
+          {
+            id: entryId,
+            query,
+            timestamp: startTs,
+            status: 'loading',
+            results: [],
+            insights: [],
+            mutation_suggestions: [],
+            error: null,
+          },
+        ].slice(-30),
+      )
 
       fire('onYouComSearch', { generation: g, query })
 

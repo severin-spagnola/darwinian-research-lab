@@ -219,6 +219,7 @@ export default function APICostDashboard({
   currentGeneration = 0,
   totalGenerations = 5,
   updateInterval = 1000,
+  simulate = true,
 }) {
   const base = useMemo(
     () => normalizeCostData(costData, totalGenerations),
@@ -242,20 +243,39 @@ export default function APICostDashboard({
   useEffect(() => {
     const t = setTimeout(() => {
       const now = Date.now()
-      setLive({
-        totalCost: base.totalCost,
-        breakdown: base.breakdown,
-        perGen: base.perGen,
-        series: [{ ts: now, total: base.totalCost }],
-        flashKey: 0,
-        lastTick: 0,
-        budget: base.budget,
+      if (simulate) {
+        setLive({
+          totalCost: base.totalCost,
+          breakdown: base.breakdown,
+          perGen: base.perGen,
+          series: [{ ts: now, total: base.totalCost }],
+          flashKey: 0,
+          lastTick: 0,
+          budget: base.budget,
+        })
+        return
+      }
+
+      setLive((prev) => {
+        const delta = Math.max(0, base.totalCost - safeNumber(prev.totalCost, 0))
+        const nextSeries = [...prev.series, { ts: now, total: base.totalCost }].slice(-180)
+        return {
+          ...prev,
+          totalCost: base.totalCost,
+          breakdown: base.breakdown,
+          perGen: base.perGen,
+          series: nextSeries,
+          flashKey: prev.flashKey + (delta > 0 ? 1 : 0),
+          lastTick: delta,
+          budget: base.budget,
+        }
       })
     }, 0)
     return () => clearTimeout(t)
-  }, [base])
+  }, [base, simulate])
 
   useEffect(() => {
+    if (!simulate) return undefined
     const interval = Math.max(250, Math.round(safeNumber(updateInterval, 1000)))
 
     const t = setInterval(() => {
@@ -316,7 +336,7 @@ export default function APICostDashboard({
     }, interval)
 
     return () => clearInterval(t)
-  }, [currentGeneration, updateInterval])
+  }, [currentGeneration, simulate, updateInterval])
 
   const animatedTotal = useAnimatedNumber(live.totalCost, { durationMs: 520 })
   const animatedRate = useAnimatedNumber(
@@ -654,4 +674,3 @@ export default function APICostDashboard({
     </div>
   )
 }
-

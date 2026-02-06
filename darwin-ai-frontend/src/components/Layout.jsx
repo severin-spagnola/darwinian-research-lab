@@ -70,11 +70,22 @@ export default function Layout({
   onSpeedChange,
   onNextGeneration,
   selectedStrategy,
+  activeLeftTab,
+  onLeftTabChange,
+  ControlsComponent,
   children,
 }) {
-  const [activeTab, setActiveTab] = useState('arena')
+  const [uncontrolledTab, setUncontrolledTab] = useState('arena')
   const [isFeedOpen, setIsFeedOpen] = useState(true)
   const [now, setNow] = useState(() => new Date())
+
+  const tabKey = activeLeftTab ?? uncontrolledTab
+  const setTab =
+    typeof onLeftTabChange === 'function'
+      ? onLeftTabChange
+      : activeLeftTab !== undefined
+        ? () => {}
+        : setUncontrolledTab
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
@@ -104,12 +115,12 @@ export default function Layout({
   )
 
   const activeContent = useMemo(() => {
-    if (activeTab === 'arena') return resolvedSlots.arena
-    if (activeTab === 'validation') return resolvedSlots.validation
-    if (activeTab === 'graph') return resolvedSlots.graph
-    if (activeTab === 'lineage') return resolvedSlots.lineage
+    if (tabKey === 'arena') return resolvedSlots.arena
+    if (tabKey === 'validation') return resolvedSlots.validation
+    if (tabKey === 'graph') return resolvedSlots.graph
+    if (tabKey === 'lineage') return resolvedSlots.lineage
     return null
-  }, [activeTab, resolvedSlots])
+  }, [resolvedSlots, tabKey])
 
   const selectedLabel = useMemo(() => {
     if (!selectedStrategy) return 'None selected'
@@ -121,6 +132,8 @@ export default function Layout({
       'Selected'
     )
   }, [selectedStrategy])
+
+  const Controls = ControlsComponent ?? PlaybackControls
 
   const panelChrome =
     'shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_40px_rgba(16,185,129,0.08)] ring-1 ring-inset ring-info-500/10 transition-shadow'
@@ -166,12 +179,12 @@ export default function Layout({
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
                   {tabDefs.map((t) => {
                     const Icon = t.icon
-                    const active = activeTab === t.key
+                    const active = tabKey === t.key
                     return (
                       <button
                         key={t.key}
                         type="button"
-                        onClick={() => setActiveTab(t.key)}
+                        onClick={() => setTab(t.key)}
                         className={[
                           'inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition',
                           'focus:outline-none focus:ring-2 focus:ring-primary-500/30',
@@ -196,7 +209,7 @@ export default function Layout({
               <div className="panel-body min-h-0 flex-1 overflow-auto">
                 <AnimatePresence mode="wait">
                   <MotionDiv
-                    key={activeTab}
+                    key={tabKey}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
@@ -206,7 +219,7 @@ export default function Layout({
                     {activeContent ?? (
                       <div className="grid place-items-center rounded-xl border border-border/60 bg-panel-elevated p-10 text-center">
                         <div className="text-sm font-semibold">
-                          {tabDefs.find((t) => t.key === activeTab)?.label ??
+                          {tabDefs.find((t) => t.key === tabKey)?.label ??
                             'Panel'}
                         </div>
                         <div className="mt-2 max-w-md text-sm text-text-muted">
@@ -317,7 +330,7 @@ export default function Layout({
 
       <footer className="border-t border-border/70 bg-panel">
         <div className="mx-auto max-w-7xl px-5 py-4 sm:px-6">
-          <PlaybackControls
+          <Controls
             isPlaying={isPlaying}
             onPlayPause={onPlayPause}
             playbackSpeed={playbackSpeed}
