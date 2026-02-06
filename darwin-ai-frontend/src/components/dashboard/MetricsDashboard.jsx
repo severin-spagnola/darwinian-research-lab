@@ -369,8 +369,8 @@ export default function MetricsDashboard({
   }, [computed.fitnessValues])
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-start justify-between gap-4">
+    <div className="space-y-4">
+      <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="grid h-10 w-10 place-items-center rounded-2xl bg-info-500/14 ring-1 ring-inset ring-info-500/25">
             <Activity className="h-5 w-5 text-info-200" />
@@ -390,8 +390,8 @@ export default function MetricsDashboard({
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_24px_rgba(16,185,129,0.08)]">
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
           <div className="flex items-center justify-between">
             <div className="text-sm font-semibold text-text">Population</div>
             <div className="font-mono text-xs text-text-muted">
@@ -399,7 +399,7 @@ export default function MetricsDashboard({
             </div>
           </div>
 
-          <div className="mt-4 grid gap-3">
+          <div className="mt-3 grid gap-2">
             <StatBar
               label="Survivors"
               valueText={`${computed.survivors} (${pct(computed.survivalRate01)})`}
@@ -421,7 +421,7 @@ export default function MetricsDashboard({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_24px_rgba(16,185,129,0.08)]">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-semibold text-text">
               <Skull className="h-4 w-4 text-danger-200" />
@@ -430,7 +430,7 @@ export default function MetricsDashboard({
             <div className="text-xs text-text-muted">Current generation</div>
           </div>
 
-          <div className="mt-4 space-y-3">
+          <div className="mt-3 space-y-2">
             {killRows.map((r) => {
               const w = (r.count / r.max) * 100
               return (
@@ -441,7 +441,7 @@ export default function MetricsDashboard({
                       {r.count}
                     </div>
                   </div>
-                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-bg-subtle ring-1 ring-inset ring-border/70">
+                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-bg-subtle ring-1 ring-inset ring-border/70">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-danger-400/75 via-danger-300/55 to-warning-300/35 transition-[width] duration-200"
                       style={{ width: `${w}%` }}
@@ -454,7 +454,7 @@ export default function MetricsDashboard({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border/60 bg-panel-elevated p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_24px_rgba(16,185,129,0.08)]">
+      <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 text-sm font-semibold text-text">
             <Award className="h-4 w-4 text-warning-200" />
@@ -463,7 +463,7 @@ export default function MetricsDashboard({
           <div className="text-xs text-text-muted">Fitness (aggregated)</div>
         </div>
 
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
           {computed.topPerformers.map((t, idx) => {
             const isTopElite = t.state === 'elite'
             return (
@@ -497,9 +497,9 @@ export default function MetricsDashboard({
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_24px_rgba(16,185,129,0.08)]">
-          <div className="flex items-center justify-between gap-4">
+      <div className="grid gap-3 lg:grid-cols-2">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
+          <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm font-semibold text-text">
               <GitCommitHorizontal className="h-4 w-4 text-info-200" />
               Survival Rate Trend
@@ -507,7 +507,7 @@ export default function MetricsDashboard({
             <div className="text-xs text-text-muted">Across generations</div>
           </div>
 
-          <div className="mt-4 h-56">
+          <div className="mt-3 h-56">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trend} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="rgba(148,163,184,0.10)" vertical={false} />
@@ -546,8 +546,8 @@ export default function MetricsDashboard({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_24px_rgba(16,185,129,0.08)]">
-          <div className="flex items-center justify-between gap-4">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
+          <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm font-semibold text-text">
               <Target className="h-4 w-4 text-primary-200" />
               Fitness Distribution
@@ -555,7 +555,7 @@ export default function MetricsDashboard({
             <div className="text-xs text-text-muted">Current generation</div>
           </div>
 
-          <div className="mt-4 h-56">
+          <div className="mt-3 h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={hist} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="rgba(148,163,184,0.10)" vertical={false} />
@@ -583,7 +583,7 @@ export default function MetricsDashboard({
 
       {/* Selected strategy details */}
       {selectedStrategy && strat ? (
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_24px_rgba(16,185,129,0.08)]">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_18px_rgba(16,185,129,0.06)]">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
               <div className="text-xs font-semibold tracking-wide text-text-subtle">
@@ -621,8 +621,8 @@ export default function MetricsDashboard({
             </div>
           </div>
 
-          <div className="mt-5 grid gap-4 lg:grid-cols-2">
-            <div className="space-y-3">
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-semibold text-text">
                 <Star className="h-4 w-4 text-primary-200" />
                 Fitness Metrics
@@ -641,13 +641,13 @@ export default function MetricsDashboard({
               />
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-semibold text-text">
                 <Gauge className="h-4 w-4 text-warning-200" />
                 Risk Metrics
               </div>
 
-              <div className="grid gap-3">
+              <div className="grid gap-2">
                 <StatBar
                   label="Sharpe Ratio"
                   valueText={strat.sharpe !== null ? strat.sharpe.toFixed(2) : '—'}
@@ -680,8 +680,8 @@ export default function MetricsDashboard({
             </div>
           </div>
 
-          <div className="mt-5 grid gap-4 lg:grid-cols-2">
-            <div className="space-y-3">
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-semibold text-text">
                 <TrendingUp className="h-4 w-4 text-info-200" />
                 Trading Metrics
@@ -712,7 +712,7 @@ export default function MetricsDashboard({
               />
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-semibold text-text">
                 <Heart className="h-4 w-4 text-primary-200" />
                 Robustness
@@ -746,7 +746,7 @@ export default function MetricsDashboard({
             </div>
           </div>
 
-          <div className="mt-5">
+          <div className="mt-4">
             <div className="flex items-center gap-2 text-sm font-semibold text-text">
               <TrendingDown className="h-4 w-4 text-danger-200" />
               Penalties

@@ -130,7 +130,7 @@ function EntryCard({
       transition={{ duration: 0.18, ease: 'easeOut', delay: Math.min(0.2, index * 0.02) }}
       className="rounded-2xl border border-border/60 bg-panel p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05)]"
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-xs text-text-muted">
             <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 ring-1 ring-inset ${chipCls}`}>
@@ -185,10 +185,10 @@ function EntryCard({
             transition={{ duration: 0.18, ease: 'easeOut' }}
             className="overflow-hidden"
           >
-            <div className="mt-4 space-y-3">
+            <div className="mt-3 space-y-2">
               <div>
                 <div className="text-xs font-semibold text-text">Results</div>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-text-muted">
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-text-muted">
                   {(entry.results ?? EMPTY_ARRAY).map((r) => (
                     <li key={r}>{r}</li>
                   ))}
@@ -208,7 +208,7 @@ function EntryCard({
                     </span>
                   ) : null}
                 </div>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-text-muted">
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-text-muted">
                   {(entry.insights ?? EMPTY_ARRAY).map((i) => (
                     <li key={i}>{i}</li>
                   ))}
@@ -227,14 +227,14 @@ function EntryCard({
                   {(entry.mutation_suggestions ?? EMPTY_ARRAY).map((m) => (
                     <div
                       key={m}
-                      className="flex items-start gap-2 rounded-xl border border-border/60 bg-panel px-3 py-2 text-sm text-text-muted"
+                      className="flex items-start gap-2 rounded-xl border border-border/60 bg-panel px-3 py-2 text-xs text-text-muted"
                     >
                       <ArrowRight className="mt-0.5 h-4 w-4 text-text-subtle" />
                       <div>{m}</div>
                     </div>
                   ))}
                   {!isLoading && (!entry.mutation_suggestions || entry.mutation_suggestions.length === 0) ? (
-                    <div className="text-sm text-text-subtle">No mutation suggestions yet.</div>
+                    <div className="text-xs text-text-subtle">No mutation suggestions yet.</div>
                   ) : null}
                 </div>
               </div>
@@ -423,8 +423,8 @@ export default function YouComFeed({
   }, [currentGeneration, isActive])
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4">
-      <div className="flex items-start justify-between gap-4">
+    <div className="flex h-full min-h-0 flex-col gap-3">
+      <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="grid h-10 w-10 place-items-center rounded-2xl bg-info-500/14 ring-1 ring-inset ring-info-500/25">
             <Search className="h-5 w-5 text-info-200" />
@@ -511,7 +511,7 @@ export default function YouComFeed({
 
       <div
         ref={scrollRef}
-        className="min-h-0 flex-1 space-y-4 overflow-auto pr-1"
+        className="min-h-0 flex-1 space-y-2 overflow-auto pr-1"
       >
         <AnimatePresence initial={false}>
           {visibleEntries.map((e, idx) => {

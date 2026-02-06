@@ -170,7 +170,7 @@ function EpisodeCard({ episode, passThreshold, index }) {
         backgroundImage: `linear-gradient(90deg, ${heatColor}, rgba(0,0,0,0))`,
       }}
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <div className="text-sm font-semibold">
@@ -380,7 +380,7 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
 
   if (!phase3) {
     return (
-      <div className="rounded-2xl border border-border/60 bg-panel-elevated p-6">
+      <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4">
         <div className="text-sm font-semibold">VALIDATION: {title}</div>
         <div className="mt-2 text-sm text-text-muted">
           No Phase 3 results found for this strategy.
@@ -394,10 +394,10 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18, ease: 'easeOut' }}
-      className="overflow-hidden rounded-2xl border border-border/60 bg-panel-elevated shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_30px_rgba(16,185,129,0.08)]"
+      className="overflow-hidden rounded-2xl border border-border/60 bg-panel-elevated shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_22px_rgba(16,185,129,0.06)]"
     >
-      <div className="border-b border-border/60 px-6 py-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="border-b border-border/60 px-4 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="text-xs font-semibold tracking-wide text-text-subtle">
               VALIDATION
@@ -440,7 +440,7 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
           </div>
         </div>
 
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
           <div className="rounded-2xl border border-border/60 bg-panel p-4">
             <div className="text-xs font-semibold text-text">Regime Coverage</div>
             <div className="mt-2 flex items-center justify-between text-xs text-text-muted">
@@ -455,7 +455,7 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
                 {years ?? '—'}
               </div>
             </div>
-            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-bg-subtle ring-1 ring-inset ring-border/70">
+            <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-bg-subtle ring-1 ring-inset ring-border/70">
               <MotionDiv
                 className="h-full rounded-full bg-gradient-to-r from-info-400/70 via-primary-300/60 to-info-300/60"
                 initial={false}
@@ -488,8 +488,8 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
         </div>
       </div>
 
-      <div className="border-b border-border/60 px-6 py-5">
-        <div className="flex items-center justify-between gap-4">
+      <div className="border-b border-border/60 px-4 py-4">
+        <div className="flex items-center justify-between gap-3">
           <div className="text-sm font-semibold text-text">
             EPISODES <span className="text-text-muted">({episodes.length} tested)</span>
           </div>
@@ -498,7 +498,7 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
           </div>
         </div>
 
-        <div className="mt-4 grid gap-4">
+        <div className="mt-3 grid gap-3">
           <AnimatePresence initial={false}>
             {episodes.map((ep, idx) => (
               <EpisodeCard
@@ -512,7 +512,7 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
         </div>
       </div>
 
-      <div className="px-6 py-5">
+      <div className="px-4 py-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <div className="text-xs font-semibold tracking-wide text-text-subtle">
@@ -542,7 +542,7 @@ export default function ValidationViewer({ strategy, isAnimating = false }) {
           </div>
 
           <div className="w-full max-w-md rounded-2xl border border-border/60 bg-panel p-4">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-between gap-3">
               <div className="text-xs font-semibold text-text">Next Action</div>
               <div className="inline-flex items-center gap-2 rounded-full bg-panel-elevated px-3 py-1 text-xs font-semibold text-text ring-1 ring-inset ring-border/70">
                 <GitPullRequest className="h-4 w-4 text-info-200" />

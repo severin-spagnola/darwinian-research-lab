@@ -411,7 +411,7 @@ export default function APICostDashboard({
 
   return (
     <div className="space-y-5">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="grid h-10 w-10 place-items-center rounded-2xl bg-warning-500/14 ring-1 ring-inset ring-warning-500/25">
             <Banknote className="h-5 w-5 text-warning-200" />
@@ -440,27 +440,27 @@ export default function APICostDashboard({
         ) : null}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2">
         <MotionDiv
           key={live.flashKey}
           initial={{
             boxShadow:
-              '0 0 0 1px rgba(34,211,238,0.06), 0 0 30px rgba(16,185,129,0.08)',
+              '0 0 0 1px rgba(34,211,238,0.05), 0 0 22px rgba(16,185,129,0.06)',
           }}
           animate={{
             boxShadow: [
-              '0 0 0 1px rgba(34,211,238,0.06), 0 0 30px rgba(16,185,129,0.08)',
-              '0 0 0 1px rgba(251,191,36,0.14), 0 0 46px rgba(251,191,36,0.10)',
-              '0 0 0 1px rgba(34,211,238,0.06), 0 0 30px rgba(16,185,129,0.08)',
+              '0 0 0 1px rgba(34,211,238,0.05), 0 0 22px rgba(16,185,129,0.06)',
+              '0 0 0 1px rgba(251,191,36,0.12), 0 0 30px rgba(251,191,36,0.08)',
+              '0 0 0 1px rgba(34,211,238,0.05), 0 0 22px rgba(16,185,129,0.06)',
             ],
           }}
           transition={{ duration: 0.55, ease: 'easeOut' }}
           className={[
-            'rounded-2xl border border-border/60 bg-panel-elevated p-5',
+            'rounded-2xl border border-border/60 bg-panel-elevated p-4',
             overBudget ? 'ring-1 ring-inset ring-danger-500/20' : '',
           ].join(' ')}
         >
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-xs text-text-muted">TOTAL COST</div>
               <div className="mt-1 flex items-end gap-2">
@@ -501,8 +501,8 @@ export default function APICostDashboard({
           </div>
         </MotionDiv>
 
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_30px_rgba(16,185,129,0.08)]">
-          <div className="flex items-start justify-between gap-4">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_22px_rgba(16,185,129,0.06)]">
+          <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-xs font-semibold tracking-wide text-text-subtle">
                 ESTIMATE
@@ -528,7 +528,7 @@ export default function APICostDashboard({
             </div>
           </div>
 
-          <div className="mt-4 rounded-2xl border border-border/60 bg-panel p-4 text-xs text-text-muted">
+          <div className="mt-3 rounded-2xl border border-border/60 bg-panel p-4 text-xs text-text-muted">
             Method:{' '}
             <span className="font-semibold text-text">{estimate.method.used}</span>{' '}
             = <span className="font-mono text-text">{usd(estimate.method.baselinePerGen)}</span> per gen
@@ -549,9 +549,9 @@ export default function APICostDashboard({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border/60 bg-panel-elevated p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_30px_rgba(16,185,129,0.08)]">
+      <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_22px_rgba(16,185,129,0.06)]">
         <div className="text-sm font-semibold text-text">BREAKDOWN</div>
-        <div className="mt-4 grid gap-4">
+        <div className="mt-3 grid gap-3">
           {breakdownRows.map((r) => (
             <div key={r.key} className="rounded-2xl border border-border/60 bg-panel p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -571,12 +571,12 @@ export default function APICostDashboard({
                 </div>
               </div>
 
-              <div className="mt-3">
+              <div className="mt-2.5">
                 <div className="flex items-center justify-between text-[11px] text-text-subtle">
                   <div>Share</div>
                   <div className="font-mono tabular-nums text-text">{Math.round(r.pct)}%</div>
                 </div>
-                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-bg-subtle ring-1 ring-inset ring-border/70">
+                <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-bg-subtle ring-1 ring-inset ring-border/70">
                   <div
                     className={`h-full rounded-full bg-gradient-to-r ${r.bar} transition-[width] duration-200`}
                     style={{ width: `${r.pct}%` }}
@@ -588,9 +588,9 @@ export default function APICostDashboard({
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_30px_rgba(16,185,129,0.08)]">
-          <div className="flex items-center justify-between gap-4">
+      <div className="grid gap-3 lg:grid-cols-2">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_22px_rgba(16,185,129,0.06)]">
+          <div className="flex items-center justify-between gap-3">
             <div className="text-sm font-semibold text-text">COST PER GENERATION</div>
             <div className="text-xs text-text-muted">
               Gen <span className="font-mono text-text">{currentGeneration}</span> /{' '}
@@ -598,7 +598,7 @@ export default function APICostDashboard({
             </div>
           </div>
 
-          <div className="mt-4 h-56">
+          <div className="mt-3 h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={perGenData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="rgba(148,163,184,0.10)" vertical={false} />
@@ -632,15 +632,15 @@ export default function APICostDashboard({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_30px_rgba(16,185,129,0.08)]">
-          <div className="flex items-center justify-between gap-4">
+        <div className="rounded-2xl border border-border/60 bg-panel-elevated p-4 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_22px_rgba(16,185,129,0.06)]">
+          <div className="flex items-center justify-between gap-3">
             <div className="text-sm font-semibold text-text">RUNNING TOTAL</div>
             <div className="text-xs text-text-muted">
               Window: <span className="font-mono text-text">~{Math.round(burn.seconds)}s</span>
             </div>
           </div>
 
-          <div className="mt-4 h-56">
+          <div className="mt-3 h-56">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={seriesData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="rgba(148,163,184,0.10)" vertical={false} />
@@ -679,7 +679,7 @@ export default function APICostDashboard({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 6 }}
                 transition={{ duration: 0.18, ease: 'easeOut' }}
-                className="mt-4 flex items-start gap-2 rounded-2xl border border-danger-500/30 bg-danger-500/10 p-4 text-sm text-danger-100"
+                className="mt-3 flex items-start gap-2 rounded-2xl border border-danger-500/30 bg-danger-500/10 p-4 text-sm text-danger-100"
               >
                 <AlertTriangle className="mt-0.5 h-5 w-5 text-danger-200" />
                 <div>

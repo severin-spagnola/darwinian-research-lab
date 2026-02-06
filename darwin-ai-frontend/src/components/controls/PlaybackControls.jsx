@@ -42,13 +42,13 @@ export default function PlaybackControls({
     : 'bg-warning-500/14 text-warning-200 ring-warning-500/25 hover:bg-warning-500/18'
 
   return (
-    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-      <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={onPlayPause}
           className={[
-            'relative inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold transition',
+            'relative inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold transition',
             'focus:outline-none focus:ring-2 focus:ring-primary-500/30',
             'ring-1 ring-inset',
             playTone,
@@ -81,7 +81,7 @@ export default function PlaybackControls({
           onClick={onNextGeneration}
           disabled={!onNextGeneration}
           className={[
-            'inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold transition',
+            'inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold transition',
             'focus:outline-none focus:ring-2 focus:ring-info-500/25',
             'ring-1 ring-inset ring-border/70',
             onNextGeneration ? 'bg-panel-elevated text-text hover:bg-white/5' : 'bg-panel text-text-subtle opacity-60',
@@ -115,7 +115,7 @@ export default function PlaybackControls({
         </div>
       </div>
 
-      <div className="flex w-full flex-col gap-2 md:w-[420px]">
+      <div className="flex w-full flex-col gap-1.5 md:w-[420px]">
         <div className="flex items-center justify-between text-xs text-text-muted">
           <div>
             Generation <span className="text-text">{gen}</span> /{' '}
@@ -137,4 +137,3 @@ export default function PlaybackControls({
     </div>
   )
 }
-

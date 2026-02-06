@@ -88,8 +88,8 @@ export default function EvolutionArena({
   }
 
   return (
-    <div className="flex min-h-0 flex-col gap-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex min-h-0 flex-col gap-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="text-sm font-semibold">
             Generation {generationNumber} - {strategies.length} Strategies
@@ -129,7 +129,7 @@ export default function EvolutionArena({
 
       <MotionDiv
         layout
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+        className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4"
       >
         <AnimatePresence initial={false}>
           {filteredSorted.map((s, idx) => (

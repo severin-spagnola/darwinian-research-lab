@@ -160,12 +160,12 @@ export default function StrategyCard({
     if (isDead) return null
     const base = isElite
       ? [
-          '0 0 0 1px rgba(16,185,129,0.20), 0 0 34px rgba(16,185,129,0.18), 0 0 0 rgba(251,191,36,0)',
-          '0 0 0 1px rgba(16,185,129,0.32), 0 0 46px rgba(16,185,129,0.22), 0 0 22px rgba(251,191,36,0.16)',
+          '0 0 0 1px rgba(16,185,129,0.16), 0 0 22px rgba(16,185,129,0.14), 0 0 0 rgba(251,191,36,0)',
+          '0 0 0 1px rgba(16,185,129,0.24), 0 0 30px rgba(16,185,129,0.18), 0 0 16px rgba(251,191,36,0.12)',
         ]
       : [
-          '0 0 0 1px rgba(16,185,129,0.14), 0 0 24px rgba(16,185,129,0.14)',
-          '0 0 0 1px rgba(16,185,129,0.22), 0 0 34px rgba(16,185,129,0.16)',
+          '0 0 0 1px rgba(16,185,129,0.12), 0 0 16px rgba(16,185,129,0.10)',
+          '0 0 0 1px rgba(16,185,129,0.18), 0 0 22px rgba(16,185,129,0.12)',
         ]
     return isTesting ? null : base
   }, [isDead, isElite, isTesting])
@@ -207,7 +207,7 @@ export default function StrategyCard({
         y: 12,
         scale: 0.985,
         filter: 'grayscale(0.92)',
-        boxShadow: '0 0 0 1px rgba(239,68,68,0.16), 0 0 24px rgba(239,68,68,0.10)',
+        boxShadow: '0 0 0 1px rgba(239,68,68,0.14), 0 0 16px rgba(239,68,68,0.08)',
       },
     }),
     [glowKeyframes],
@@ -447,7 +447,7 @@ export default function StrategyCard({
           </div>
         </div>
 
-        <div className="mt-4 grid gap-2">
+        <div className="mt-3 grid gap-2">
           <div className="flex items-end justify-between">
             <div className="text-xs text-text-muted">Fitness</div>
             <div className="text-lg font-semibold tabular-nums text-text">
@@ -473,12 +473,12 @@ export default function StrategyCard({
           </div>
         </div>
 
-        <div className="mt-4">
+        <div className="mt-3">
           <div className="flex items-center justify-between text-[11px] text-text-subtle">
             <div>Validation</div>
             <div className="font-mono tabular-nums text-text">{progressPct}%</div>
           </div>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-bg-subtle ring-1 ring-inset ring-border/70">
+          <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-bg-subtle ring-1 ring-inset ring-border/70">
             <div
               className={[
                 'h-full rounded-full transition-[width] duration-200',
@@ -493,7 +493,7 @@ export default function StrategyCard({
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-3 text-xs text-text-muted">
+        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-text-muted">
           <div className="truncate">
             Parent: <span className="font-mono text-text">{parentLabel}</span>
           </div>

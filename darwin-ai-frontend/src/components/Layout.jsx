@@ -136,13 +136,13 @@ export default function Layout({
   const Controls = ControlsComponent ?? PlaybackControls
 
   const panelChrome =
-    'shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_40px_rgba(16,185,129,0.08)] ring-1 ring-inset ring-info-500/10 transition-shadow'
+    'shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_0_24px_rgba(16,185,129,0.06)] ring-1 ring-inset ring-info-500/10 transition-shadow'
 
   return (
     <div className="flex h-screen flex-col bg-bg">
       <header className="border-b border-border/70 bg-panel">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-6">
-          <div className="flex min-w-0 items-center gap-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
             <div className="grid h-10 w-10 place-items-center rounded-2xl bg-primary-500/15 ring-1 ring-inset ring-primary-500/25">
               <Dna className="h-5 w-5 text-primary-200" />
             </div>
@@ -171,8 +171,8 @@ export default function Layout({
 
       {/* On small screens, allow the page to scroll so the right column panels aren't clipped. */}
       <div className="flex-1 overflow-auto">
-        <div className="mx-auto min-h-full max-w-7xl px-5 py-5 sm:px-6">
-          <div className="grid h-auto min-h-0 grid-cols-1 gap-5 lg:h-full lg:grid-cols-5">
+        <div className="mx-auto min-h-full max-w-7xl px-4 py-3 sm:px-6">
+          <div className="grid h-auto min-h-0 grid-cols-1 gap-3 lg:h-full lg:grid-cols-5">
             <section
               className={`panel ${panelChrome} flex min-h-0 flex-col overflow-hidden lg:col-span-3`}
             >
@@ -237,7 +237,7 @@ export default function Layout({
               </div>
             </section>
 
-            <aside className="flex min-h-0 flex-col gap-5 lg:col-span-2">
+            <aside className="flex min-h-0 flex-col gap-3 lg:col-span-2">
               <section className={`panel ${panelChrome} flex flex-col overflow-hidden`}>
                 <div className="panel-header">
                   <div className="flex items-center gap-2">
@@ -330,7 +330,7 @@ export default function Layout({
       </div>
 
       <footer className="border-t border-border/70 bg-panel">
-        <div className="mx-auto max-w-7xl px-5 py-4 sm:px-6">
+        <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6">
           <Controls
             isPlaying={isPlaying}
             onPlayPause={onPlayPause}
