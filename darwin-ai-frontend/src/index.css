@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    text-rendering: geometricPrecision;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-bg text-text font-sans antialiased;
+  }
+
+  #root {
+    height: 100%;
+  }
+
+  a {
+    @apply text-info-300 hover:text-info-200;
+  }
+
+  ::selection {
+    @apply bg-primary-500/30 text-text;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-2xl border border-border bg-panel;
+  }
+
+  .panel-header {
+    @apply flex items-center justify-between gap-4 border-b border-border/60 px-6 py-4;
+  }
+
+  .panel-body {
+    @apply px-6 py-5;
+  }
+
+  /* React Flow (XYFlow) dark theme polish */
+  .react-flow {
+    @apply bg-bg;
+  }
+
+  .react-flow__controls {
+    @apply overflow-hidden rounded-2xl border border-border/60 bg-panel-elevated shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_24px_rgba(16,185,129,0.08)];
+  }
+
+  .react-flow__controls button {
+    @apply border-0 bg-transparent text-text-muted transition hover:bg-white/5 hover:text-text;
+  }
+
+  .react-flow__controls button:focus-visible {
+    @apply outline-none ring-2 ring-info-500/25;
+  }
+
+  .react-flow__minimap {
+    @apply overflow-hidden rounded-2xl border border-border/60 bg-panel-elevated;
+  }
+
+  .react-flow__attribution {
+    display: none;
+  }
+}

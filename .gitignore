@@ -28,6 +28,8 @@ venv/
 ENV/
 env/
 .venv
+.venv311/
+.venv_bad_*/
 
 # IDE
 .vscode/
@@ -36,6 +38,12 @@ env/
 *.swo
 *~
 .DS_Store
+
+# Node / Frontend
+node_modules/
+logs/
+*.tgz
+.vite/
 
 # Environment variables
 .env

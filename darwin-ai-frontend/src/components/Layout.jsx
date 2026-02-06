@@ -1,0 +1,414 @@
+import { Children, isValidElement, useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  Activity,
+  ChevronDown,
+  ChevronUp,
+  CircleDollarSign,
+  Dna,
+  FlaskConical,
+  GitBranch,
+  LayoutGrid,
+  Network,
+  Pause,
+  Play,
+  Sparkles,
+} from 'lucide-react'
+
+function createSlot(slotName) {
+  function Slot({ children }) {
+    return children ?? null
+  }
+  Slot.slotName = slotName
+  Slot.displayName = `Layout.${slotName}`
+  return Slot
+}
+
+const ArenaSlot = createSlot('arena')
+const ValidationSlot = createSlot('validation')
+const GraphSlot = createSlot('graph')
+const LineageSlot = createSlot('lineage')
+const YouFeedSlot = createSlot('youFeed')
+const ApiCostsSlot = createSlot('apiCosts')
+const MetricsSlot = createSlot('metrics')
+
+const SPEEDS = [1, 2, 5, 10]
+
+function formatTime(d) {
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
+const MotionDiv = motion.div
+
+function extractSlots(children) {
+  const slots = {
+    arena: null,
+    validation: null,
+    graph: null,
+    lineage: null,
+    youFeed: null,
+    apiCosts: null,
+    metrics: null,
+  }
+
+  Children.toArray(children).forEach((child) => {
+    if (!isValidElement(child)) return
+    const slotName = child.type?.slotName
+    if (!slotName) return
+    if (!(slotName in slots)) return
+    slots[slotName] = child.props?.children ?? null
+  })
+
+  return slots
+}
+
+export default function Layout({
+  currentGeneration,
+  isPlaying,
+  playbackSpeed,
+  onPlayPause,
+  onSpeedChange,
+  selectedStrategy,
+  children,
+}) {
+  const [activeTab, setActiveTab] = useState('arena')
+  const [isFeedOpen, setIsFeedOpen] = useState(true)
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(t)
+  }, [])
+
+  const slots = useMemo(() => extractSlots(children), [children])
+  const hasAnySlot = useMemo(
+    () => Object.values(slots).some((v) => v !== null && v !== undefined),
+    [slots],
+  )
+
+  // If no slot wrappers were used, treat `children` as Arena content.
+  const resolvedSlots = useMemo(() => {
+    if (hasAnySlot) return slots
+    return { ...slots, arena: children ?? null }
+  }, [children, hasAnySlot, slots])
+
+  const tabDefs = useMemo(
+    () => [
+      { key: 'arena', label: 'Arena', icon: LayoutGrid },
+      { key: 'validation', label: 'Validation', icon: FlaskConical },
+      { key: 'graph', label: 'Graph', icon: Network },
+      { key: 'lineage', label: 'Lineage', icon: GitBranch },
+    ],
+    [],
+  )
+
+  const activeContent = useMemo(() => {
+    if (activeTab === 'arena') return resolvedSlots.arena
+    if (activeTab === 'validation') return resolvedSlots.validation
+    if (activeTab === 'graph') return resolvedSlots.graph
+    if (activeTab === 'lineage') return resolvedSlots.lineage
+    return null
+  }, [activeTab, resolvedSlots])
+
+  const selectedLabel = useMemo(() => {
+    if (!selectedStrategy) return 'None selected'
+    return (
+      selectedStrategy?.name ??
+      selectedStrategy?.id ??
+      selectedStrategy?.graph?.name ??
+      selectedStrategy?.graph?.id ??
+      'Selected'
+    )
+  }, [selectedStrategy])
+
+  const panelChrome =
+    'shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_40px_rgba(16,185,129,0.08)] ring-1 ring-inset ring-info-500/10 transition-shadow'
+
+  return (
+    <div className="flex h-screen flex-col bg-bg">
+      <header className="border-b border-border/70 bg-panel">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-4">
+            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-primary-500/15 ring-1 ring-inset ring-primary-500/25">
+              <Dna className="h-5 w-5 text-primary-200" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <div className="truncate text-sm font-semibold tracking-wide">
+                  Darwin AI
+                </div>
+                <span className="rounded-full bg-panel-elevated px-2.5 py-1 text-xs font-medium text-text-muted ring-1 ring-inset ring-border/70">
+                  Generation {currentGeneration}
+                </span>
+              </div>
+              <div className="mt-0.5 truncate text-xs text-text-muted">
+                {isPlaying ? 'Auto-playing' : 'Paused'} • {formatTime(now)}
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden items-center gap-3 sm:flex">
+            <div className="rounded-xl bg-panel-elevated px-3 py-2 text-xs text-text-muted ring-1 ring-inset ring-border/70">
+              Selected: <span className="text-text">{selectedLabel}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex-1 overflow-hidden">
+        <div className="mx-auto h-full max-w-7xl px-5 py-5 sm:px-6">
+          <div className="grid h-full min-h-0 grid-cols-1 gap-5 lg:grid-cols-5">
+            <section
+              className={`panel ${panelChrome} flex min-h-0 flex-col overflow-hidden lg:col-span-3`}
+            >
+              <div className="panel-header">
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                  {tabDefs.map((t) => {
+                    const Icon = t.icon
+                    const active = activeTab === t.key
+                    return (
+                      <button
+                        key={t.key}
+                        type="button"
+                        onClick={() => setActiveTab(t.key)}
+                        className={[
+                          'inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition',
+                          'focus:outline-none focus:ring-2 focus:ring-primary-500/30',
+                          active
+                            ? 'bg-primary-500/12 text-primary-200 ring-1 ring-inset ring-primary-500/25'
+                            : 'text-text-muted hover:bg-white/5 hover:text-text',
+                        ].join(' ')}
+                        aria-pressed={active}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {t.label}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <div className="hidden text-xs text-text-muted md:block">
+                  {selectedLabel}
+                </div>
+              </div>
+
+              <div className="panel-body min-h-0 flex-1 overflow-auto">
+                <AnimatePresence mode="wait">
+                  <MotionDiv
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.16, ease: 'easeOut' }}
+                    className="min-h-[240px]"
+                  >
+                    {activeContent ?? (
+                      <div className="grid place-items-center rounded-xl border border-border/60 bg-panel-elevated p-10 text-center">
+                        <div className="text-sm font-semibold">
+                          {tabDefs.find((t) => t.key === activeTab)?.label ??
+                            'Panel'}
+                        </div>
+                        <div className="mt-2 max-w-md text-sm text-text-muted">
+                          No content provided yet. Pass a slot like{' '}
+                          <span className="font-mono text-text">
+                            &lt;Layout.Arena&gt;
+                          </span>{' '}
+                          to render your UI here.
+                        </div>
+                      </div>
+                    )}
+                  </MotionDiv>
+                </AnimatePresence>
+              </div>
+            </section>
+
+            <aside className="flex min-h-0 flex-col gap-5 lg:col-span-2">
+              <section className={`panel ${panelChrome} flex flex-col overflow-hidden`}>
+                <div className="panel-header">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-info-200" />
+                    <div className="text-sm font-semibold">You.com Feed</div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsFeedOpen((v) => !v)}
+                    className="inline-flex items-center gap-2 rounded-xl px-2.5 py-2 text-xs font-medium text-text-muted transition hover:bg-white/5 hover:text-text focus:outline-none focus:ring-2 focus:ring-info-500/25"
+                    aria-expanded={isFeedOpen}
+                  >
+                    {isFeedOpen ? (
+                      <>
+                        <ChevronUp className="h-4 w-4" />
+                        Collapse
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4" />
+                        Expand
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <AnimatePresence initial={false}>
+                  {isFeedOpen ? (
+                    <MotionDiv
+                      key="feed"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="panel-body max-h-[30vh] overflow-auto">
+                        {resolvedSlots.youFeed ?? (
+                          <div className="rounded-xl border border-border/60 bg-panel-elevated p-4 text-sm text-text-muted">
+                            Provide <span className="font-mono text-text">&lt;Layout.YouFeed&gt;</span>{' '}
+                            content to render intelligence results.
+                          </div>
+                        )}
+                      </div>
+                    </MotionDiv>
+                  ) : null}
+                </AnimatePresence>
+              </section>
+
+              <section
+                className={`panel ${panelChrome} flex min-h-0 flex-1 flex-col overflow-hidden`}
+              >
+                <div className="panel-header">
+                  <div className="flex items-center gap-2">
+                    <CircleDollarSign className="h-4 w-4 text-primary-200" />
+                    <div className="text-sm font-semibold">API Costs</div>
+                  </div>
+                  <div className="text-xs text-text-muted">Tracking</div>
+                </div>
+                <div className="panel-body min-h-0 flex-1 overflow-auto">
+                  {resolvedSlots.apiCosts ?? (
+                    <div className="rounded-xl border border-border/60 bg-panel-elevated p-4 text-sm text-text-muted">
+                      Provide <span className="font-mono text-text">&lt;Layout.ApiCosts&gt;</span>{' '}
+                      content to render cost tracking.
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              <section className={`panel ${panelChrome} flex flex-col overflow-hidden`}>
+                <div className="panel-header">
+                  <div className="flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-warning-200" />
+                    <div className="text-sm font-semibold">Metrics</div>
+                  </div>
+                  <div className="text-xs text-text-muted">Live</div>
+                </div>
+                <div className="panel-body">
+                  {resolvedSlots.metrics ?? (
+                    <div className="rounded-xl border border-border/60 bg-panel-elevated p-4 text-sm text-text-muted">
+                      Provide <span className="font-mono text-text">&lt;Layout.Metrics&gt;</span>{' '}
+                      content to render metrics.
+                    </div>
+                  )}
+                </div>
+              </section>
+            </aside>
+          </div>
+        </div>
+      </div>
+
+      <footer className="border-t border-border/70 bg-panel">
+        <div className="mx-auto max-w-7xl px-5 py-4 sm:px-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={onPlayPause}
+                className={[
+                  'inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold transition',
+                  'focus:outline-none focus:ring-2 focus:ring-primary-500/30',
+                  isPlaying
+                    ? 'bg-primary-500/14 text-primary-200 ring-1 ring-inset ring-primary-500/25 hover:bg-primary-500/18'
+                    : 'bg-warning-500/14 text-warning-200 ring-1 ring-inset ring-warning-500/25 hover:bg-warning-500/18',
+                ].join(' ')}
+              >
+                {isPlaying ? (
+                  <>
+                    <Pause className="h-4 w-4" />
+                    Pause
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-4 w-4" />
+                    Play
+                  </>
+                )}
+              </button>
+
+              <div className="flex items-center gap-2 rounded-2xl bg-panel-elevated p-1 ring-1 ring-inset ring-border/70">
+                {SPEEDS.map((s) => {
+                  const active = Number(playbackSpeed) === s
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => onSpeedChange?.(s)}
+                      className={[
+                        'rounded-xl px-3 py-2 text-xs font-semibold transition',
+                        active
+                          ? 'bg-info-500/14 text-info-200 ring-1 ring-inset ring-info-500/25'
+                          : 'text-text-muted hover:bg-white/5 hover:text-text',
+                      ].join(' ')}
+                      aria-pressed={active}
+                    >
+                      {s}x
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="flex w-full flex-col gap-2 md:w-[380px]">
+              <div className="flex items-center justify-between text-xs text-text-muted">
+                <div>
+                  Generation <span className="text-text">{currentGeneration}</span> /{' '}
+                  <span className="text-text">5</span>
+                </div>
+                <div>{isPlaying ? `Speed ${playbackSpeed}x` : 'Paused'}</div>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-panel-elevated ring-1 ring-inset ring-border/70">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-primary-400 via-info-400 to-primary-300 transition-[width] duration-200"
+                  style={{
+                    width: `${Math.max(
+                      0,
+                      Math.min(
+                        100,
+                        ((Number(currentGeneration) || 0) / Math.max(1, 5)) * 100,
+                      ),
+                    )}%`,
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
+Layout.Arena = ArenaSlot
+Layout.Validation = ValidationSlot
+Layout.Graph = GraphSlot
+Layout.Lineage = LineageSlot
+Layout.YouFeed = YouFeedSlot
+Layout.ApiCosts = ApiCostsSlot
+Layout.Metrics = MetricsSlot
+
+export {
+  ArenaSlot as LayoutArena,
+  ApiCostsSlot as LayoutApiCosts,
+  GraphSlot as LayoutGraph,
+  LineageSlot as LayoutLineage,
+  MetricsSlot as LayoutMetrics,
+  ValidationSlot as LayoutValidation,
+  YouFeedSlot as LayoutYouFeed,
+}
