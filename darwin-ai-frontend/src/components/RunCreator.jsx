@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Play, Loader2, Sparkles } from 'lucide-react'
+import { Play, Loader2, Sparkles, Zap } from 'lucide-react'
 
 const MotionDiv = motion.div
 
@@ -33,6 +33,37 @@ Create a gap-and-go momentum trading strategy:
 **Risk Management:**
 - Max 1 position per ticker per day
 - Only enter if ATR(14) > 1.5 (sufficient volatility)`)
+  }
+
+  const handleDemoRun = async () => {
+    setIsCreating(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/runs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          seed_prompt: 'Gap & Go Demo',
+          universe: { type: 'explicit', symbols: ['TSLA'] },
+          time_config: { timeframe: '5m', lookback_days: 90, date_range: { start: '2024-10-01', end: '2025-01-31' } },
+          demo_mode: true
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null)
+        throw new Error(errorData?.detail || `HTTP ${response.status}`)
+      }
+
+      const data = await response.json()
+      if (onRunCreated) onRunCreated(data.run_id)
+      setIsCreating(false)
+    } catch (err) {
+      console.error('Demo run failed:', err)
+      setError(err.message || 'Demo run failed. Check backend connection.')
+      setIsCreating(false)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -145,6 +176,16 @@ Create a gap-and-go momentum trading strategy:
           )}
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleDemoRun}
+              disabled={isCreating}
+              className="flex items-center gap-2 px-6 py-3 bg-success-500 hover:bg-success-600 disabled:bg-success-500/50 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
+            >
+              <Zap className="w-4 h-4" />
+              Instant Demo
+            </button>
+
             <button
               type="submit"
               disabled={isCreating || !prompt.trim()}

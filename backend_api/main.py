@@ -55,6 +55,15 @@ def _record_error(entry: Dict[str, Any]):
 
 app = FastAPI(title="Darwin Evolution API", version="1.0.0")
 
+# Seed demo fixtures into results directory on startup
+import shutil
+_demo_fixtures_dir = Path(__file__).parent / "demo_fixtures"
+_demo_target = config.RESULTS_DIR / "runs" / "demo_gap_and_go"
+if _demo_fixtures_dir.exists() and not _demo_target.exists():
+    _demo_target.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(_demo_fixtures_dir / "demo_gap_and_go", _demo_target, dirs_exist_ok=True)
+    logger.info("Seeded demo_gap_and_go fixture into results directory")
+
 # CORS middleware for local development and production
 # Use allow_origin_regex for wildcard Vercel domains
 app.add_middleware(
@@ -166,6 +175,7 @@ class CreateRunRequest(BaseModel):
     survivors_per_gen: int = 3
     children_per_survivor: int = 2
     phase3_config: Optional[Dict[str, Any]] = None
+    demo_mode: bool = False
 
 
 def _run_darwin_task(
@@ -231,6 +241,18 @@ def _run_darwin_task(
 @app.post("/api/runs")
 async def create_run(request: CreateRunRequest, background_tasks: BackgroundTasks):
     """Create a new Darwin evolution run in the background."""
+    # Demo mode: return pre-baked Gap & Go results instantly
+    if request.demo_mode:
+        demo_dir = config.RESULTS_DIR / "runs" / "demo_gap_and_go"
+        if demo_dir.exists():
+            return {
+                "run_id": "demo_gap_and_go",
+                "status": "completed",
+                "message": "Demo run loaded with pre-computed Gap & Go results."
+            }
+        else:
+            raise HTTPException(status_code=404, detail="Demo data not found. Run the Gap & Go strategy locally first.")
+
     try:
         # Parse config
         universe = UniverseSpec(**request.universe)

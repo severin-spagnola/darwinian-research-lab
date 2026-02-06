@@ -1,0 +1,49 @@
+{
+  "universe": {
+    "type": "explicit",
+    "symbols": [
+      "TSLA",
+      "NVDA",
+      "AAPL",
+      "AMD",
+      "COIN"
+    ],
+    "count": null
+  },
+  "time_config": {
+    "timeframe": "5m",
+    "session_tz": "America/New_York",
+    "date_range": {
+      "start": "2024-10-01",
+      "end": "2025-01-31"
+    }
+  },
+  "nl_text": "# Gap & Go Momentum Strategy - Seed Prompt\n\nCreate a gap-and-go momentum trading strategy with the following specifications:\n\n## Universe\nTrade these high-momentum tickers: TSLA, NVDA, AAPL, AMD, COIN, PLTR, META, MSFT, GOOGL, AMZN, AVGO, QCOM, MU, CRWD, SNOW\n\n## Core Logic\n1. **Gap Detection**: At market open (9:30 AM ET), compare current price to previous day's close\n2. **Entry Criteria**:\n   - Gap up must be at least 2% above previous close\n   - Wait for confirmation: enter on the 3rd consecutive green 5-minute candle\n   - Volume on entry candle must be above 20-period average\n   - RSI(14) should be between 50-70 (not overbought)\n3. **Exit Rules**:\n   - Take profit at 2.5% gain from entry\n   - Stop loss at 1% below entry\n   - Time stop: close position after 60 minutes if neither target hit\n4. **Time Window**: Only trade between 9:30 AM - 11:00 AM ET\n\n## Risk Management\n- Maximum 1 position per ticker per day\n- Only enter if ATR(14) > 1.5 (sufficient volatility)\n\n## Technical Indicators to Use\n- RSI for momentum confirmation\n- Volume moving average for liquidity check\n- ATR for volatility filtering\n- Simple moving average crossovers optional\n\n## Mutation-Friendly Parameters\nThe strategy should be easy to mutate on:\n- Gap threshold (2% vs 3% vs 5%)\n- Number of confirmation candles (2nd vs 3rd vs 4th)\n- Profit target (1.5% vs 2% vs 3%)\n- Stop loss tightness (0.5% vs 1% vs 1.5%)\n- RSI thresholds\n- Time window duration\n- Volume multiplier requirements\n\nGenerate a StrategyGraph that implements this logic using technical indicator nodes, comparison operators, and position management.\n",
+  "depth": 2,
+  "branching": 2,
+  "survivors_per_layer": 3,
+  "min_survivors_floor": 1,
+  "max_total_evals": 200,
+  "compile_provider": "openai",
+  "mutate_provider": "anthropic",
+  "rescue_mode": true,
+  "phase3_config": {
+    "enabled": false,
+    "mode": "baseline",
+    "n_episodes": 5,
+    "min_months": 1,
+    "max_months": 2,
+    "min_bars": 120,
+    "seed": null,
+    "sampling_mode": "uniform_random",
+    "min_trades_per_episode": 3,
+    "regime_penalty_weight": 0.3,
+    "abort_on_all_episode_failures": true,
+    "schedule": null,
+    "sampling_mode_schedule": null,
+    "research_pack_id": null,
+    "research_budget_per_generation": 0,
+    "research_on_kill_reasons": [],
+    "generate_memos_verdicts": true
+  }
+}

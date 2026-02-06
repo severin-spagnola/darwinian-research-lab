@@ -1,0 +1,27 @@
+{
+  "run_id": "demo_gap_and_go",
+  "timestamp": "2026-02-06T15:47:15.617653",
+  "total_evaluations": 1,
+  "top_strategies": [
+    {
+      "graph_id": "gap_and_go_momentum",
+      "fitness": 1.342,
+      "decision": "survive"
+    }
+  ],
+  "kill_stats": {},
+  "generation_stats": [
+    {
+      "total": 0,
+      "survivors": 0,
+      "killed": 0,
+      "survivor_rate": 0.0,
+      "best_fitness": 0.0,
+      "mean_fitness": 0.0,
+      "generation": 1,
+      "survivor_floor_triggered": false,
+      "rescue_from_best_dead_triggered": false
+    }
+  ],
+  "best_fitness": 1.3418472605119618
+}
