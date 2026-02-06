@@ -22,6 +22,7 @@ import config
 from graph.schema import UniverseSpec, TimeConfig, DateRange
 from data.polygon_client import PolygonClient
 from evolution.darwin import run_darwin
+from validation.evaluation import Phase3Config
 from graph.gene_pool import get_registry
 from graph.gene_pool import get_registry
 from llm.cache import get_budget, reset_budget, get_global_budget, LLMBudget
@@ -690,6 +691,27 @@ async def _run_darwin_job(run_id: str, request: RunRequest):
         )
         logger.info(f"[{run_id}] Created universe and time config")
 
+        # Configure Phase 3 robust evaluation
+        phase3_config = None
+        if request.robust_mode:
+            logger.info(f"[{run_id}] Enabling Phase 3 multi-episode evaluation")
+            phase3_config = Phase3Config(
+                enabled=True,
+                mode="episodes",
+                n_episodes=8,  # Test on 8 different time windows
+                min_months=6,
+                max_months=12,
+                min_bars=120,
+                sampling_mode="uniform_random",  # Better temporal coverage
+                min_trades_per_episode=3,
+                regime_penalty_weight=0.3,
+                abort_on_all_episode_failures=True,
+            )
+            emit_event(run_id, "log", {"message": "Phase 3 enabled: 8 episodes, 6-12 months each, uniform sampling"})
+        else:
+            logger.info(f"[{run_id}] Using Phase 2 train/holdout validation")
+            emit_event(run_id, "log", {"message": "Using standard train/holdout validation"})
+
         # Run Darwin with event callback
         logger.info(f"[{run_id}] Starting Darwin evolution")
         emit_event(run_id, "log", {"message": "Starting Darwin evolution..."})
@@ -706,6 +728,7 @@ async def _run_darwin_job(run_id: str, request: RunRequest):
             survivors_per_layer=request.survivors_per_layer,
             max_total_evals=request.max_total_evals,
             run_id_param=run_id,  # Pass run_id to darwin
+            phase3_config=phase3_config,  # PHASE 3 ACTIVATED! 🚀
         )
 
         logger.info(f"[{run_id}] Darwin evolution completed. Total evals: {summary.total_evaluations}")
