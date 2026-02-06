@@ -6,14 +6,14 @@ import {
   ChevronUp,
   CircleDollarSign,
   Dna,
-  FlaskConical,
   GitBranch,
   LayoutGrid,
   Network,
-  Pause,
-  Play,
+  FlaskConical,
   Sparkles,
 } from 'lucide-react'
+
+import PlaybackControls from './controls/PlaybackControls.jsx'
 
 function createSlot(slotName) {
   function Slot({ children }) {
@@ -31,8 +31,6 @@ const LineageSlot = createSlot('lineage')
 const YouFeedSlot = createSlot('youFeed')
 const ApiCostsSlot = createSlot('apiCosts')
 const MetricsSlot = createSlot('metrics')
-
-const SPEEDS = [1, 2, 5, 10]
 
 function formatTime(d) {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -64,16 +62,30 @@ function extractSlots(children) {
 
 export default function Layout({
   currentGeneration,
+  totalGenerations = 5,
+  currentPhase = 'intro',
   isPlaying,
   playbackSpeed,
   onPlayPause,
   onSpeedChange,
+  onNextGeneration,
   selectedStrategy,
+  activeLeftTab,
+  onLeftTabChange,
+  ControlsComponent,
   children,
 }) {
-  const [activeTab, setActiveTab] = useState('arena')
+  const [uncontrolledTab, setUncontrolledTab] = useState('arena')
   const [isFeedOpen, setIsFeedOpen] = useState(true)
   const [now, setNow] = useState(() => new Date())
+
+  const tabKey = activeLeftTab ?? uncontrolledTab
+  const setTab =
+    typeof onLeftTabChange === 'function'
+      ? onLeftTabChange
+      : activeLeftTab !== undefined
+        ? () => {}
+        : setUncontrolledTab
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
@@ -103,12 +115,12 @@ export default function Layout({
   )
 
   const activeContent = useMemo(() => {
-    if (activeTab === 'arena') return resolvedSlots.arena
-    if (activeTab === 'validation') return resolvedSlots.validation
-    if (activeTab === 'graph') return resolvedSlots.graph
-    if (activeTab === 'lineage') return resolvedSlots.lineage
+    if (tabKey === 'arena') return resolvedSlots.arena
+    if (tabKey === 'validation') return resolvedSlots.validation
+    if (tabKey === 'graph') return resolvedSlots.graph
+    if (tabKey === 'lineage') return resolvedSlots.lineage
     return null
-  }, [activeTab, resolvedSlots])
+  }, [resolvedSlots, tabKey])
 
   const selectedLabel = useMemo(() => {
     if (!selectedStrategy) return 'None selected'
@@ -120,6 +132,8 @@ export default function Layout({
       'Selected'
     )
   }, [selectedStrategy])
+
+  const Controls = ControlsComponent ?? PlaybackControls
 
   const panelChrome =
     'shadow-[0_0_0_1px_rgba(34,211,238,0.06),0_0_40px_rgba(16,185,129,0.08)] ring-1 ring-inset ring-info-500/10 transition-shadow'
@@ -155,9 +169,10 @@ export default function Layout({
         </div>
       </header>
 
-      <div className="flex-1 overflow-hidden">
-        <div className="mx-auto h-full max-w-7xl px-5 py-5 sm:px-6">
-          <div className="grid h-full min-h-0 grid-cols-1 gap-5 lg:grid-cols-5">
+      {/* On small screens, allow the page to scroll so the right column panels aren't clipped. */}
+      <div className="flex-1 overflow-auto">
+        <div className="mx-auto min-h-full max-w-7xl px-5 py-5 sm:px-6">
+          <div className="grid h-auto min-h-0 grid-cols-1 gap-5 lg:h-full lg:grid-cols-5">
             <section
               className={`panel ${panelChrome} flex min-h-0 flex-col overflow-hidden lg:col-span-3`}
             >
@@ -165,12 +180,12 @@ export default function Layout({
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
                   {tabDefs.map((t) => {
                     const Icon = t.icon
-                    const active = activeTab === t.key
+                    const active = tabKey === t.key
                     return (
                       <button
                         key={t.key}
                         type="button"
-                        onClick={() => setActiveTab(t.key)}
+                        onClick={() => setTab(t.key)}
                         className={[
                           'inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition',
                           'focus:outline-none focus:ring-2 focus:ring-primary-500/30',
@@ -195,7 +210,7 @@ export default function Layout({
               <div className="panel-body min-h-0 flex-1 overflow-auto">
                 <AnimatePresence mode="wait">
                   <MotionDiv
-                    key={activeTab}
+                    key={tabKey}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
@@ -205,7 +220,7 @@ export default function Layout({
                     {activeContent ?? (
                       <div className="grid place-items-center rounded-xl border border-border/60 bg-panel-elevated p-10 text-center">
                         <div className="text-sm font-semibold">
-                          {tabDefs.find((t) => t.key === activeTab)?.label ??
+                          {tabDefs.find((t) => t.key === tabKey)?.label ??
                             'Panel'}
                         </div>
                         <div className="mt-2 max-w-md text-sm text-text-muted">
@@ -316,79 +331,16 @@ export default function Layout({
 
       <footer className="border-t border-border/70 bg-panel">
         <div className="mx-auto max-w-7xl px-5 py-4 sm:px-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={onPlayPause}
-                className={[
-                  'inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold transition',
-                  'focus:outline-none focus:ring-2 focus:ring-primary-500/30',
-                  isPlaying
-                    ? 'bg-primary-500/14 text-primary-200 ring-1 ring-inset ring-primary-500/25 hover:bg-primary-500/18'
-                    : 'bg-warning-500/14 text-warning-200 ring-1 ring-inset ring-warning-500/25 hover:bg-warning-500/18',
-                ].join(' ')}
-              >
-                {isPlaying ? (
-                  <>
-                    <Pause className="h-4 w-4" />
-                    Pause
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-4 w-4" />
-                    Play
-                  </>
-                )}
-              </button>
-
-              <div className="flex items-center gap-2 rounded-2xl bg-panel-elevated p-1 ring-1 ring-inset ring-border/70">
-                {SPEEDS.map((s) => {
-                  const active = Number(playbackSpeed) === s
-                  return (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => onSpeedChange?.(s)}
-                      className={[
-                        'rounded-xl px-3 py-2 text-xs font-semibold transition',
-                        active
-                          ? 'bg-info-500/14 text-info-200 ring-1 ring-inset ring-info-500/25'
-                          : 'text-text-muted hover:bg-white/5 hover:text-text',
-                      ].join(' ')}
-                      aria-pressed={active}
-                    >
-                      {s}x
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            <div className="flex w-full flex-col gap-2 md:w-[380px]">
-              <div className="flex items-center justify-between text-xs text-text-muted">
-                <div>
-                  Generation <span className="text-text">{currentGeneration}</span> /{' '}
-                  <span className="text-text">5</span>
-                </div>
-                <div>{isPlaying ? `Speed ${playbackSpeed}x` : 'Paused'}</div>
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-panel-elevated ring-1 ring-inset ring-border/70">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-primary-400 via-info-400 to-primary-300 transition-[width] duration-200"
-                  style={{
-                    width: `${Math.max(
-                      0,
-                      Math.min(
-                        100,
-                        ((Number(currentGeneration) || 0) / Math.max(1, 5)) * 100,
-                      ),
-                    )}%`,
-                  }}
-                />
-              </div>
-            </div>
-          </div>
+          <Controls
+            isPlaying={isPlaying}
+            onPlayPause={onPlayPause}
+            playbackSpeed={playbackSpeed}
+            onSpeedChange={onSpeedChange}
+            currentGeneration={currentGeneration}
+            totalGenerations={totalGenerations}
+            currentPhase={currentPhase}
+            onNextGeneration={onNextGeneration}
+          />
         </div>
       </footer>
     </div>

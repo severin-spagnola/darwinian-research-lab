@@ -8,6 +8,10 @@
     text-rendering: geometricPrecision;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   html,
   body {
     height: 100%;
@@ -15,6 +19,10 @@
 
   body {
     @apply bg-bg text-text font-sans antialiased;
+    /* Subtle dot grid pattern for depth (kept very low contrast). */
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(34, 211, 238, 0.10) 1px, transparent 0);
+    background-size: 28px 28px;
   }
 
   #root {
@@ -27,6 +35,31 @@
 
   ::selection {
     @apply bg-primary-500/30 text-text;
+  }
+
+  /* Scrollbars (WebKit + Firefox) */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.30) rgba(32, 32, 32, 0.60);
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: rgba(32, 32, 32, 0.55);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.28);
+    border-radius: 999px;
+    border: 2px solid rgba(32, 32, 32, 0.55);
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.40);
   }
 }
 

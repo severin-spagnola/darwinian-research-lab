@@ -246,6 +246,7 @@ export default function APICostDashboard({
   currentGeneration = 0,
   totalGenerations = 5,
   updateInterval = 1000,
+  simulate = true,
 }) {
   const base = useMemo(
     () => normalizeCostData(costData, totalGenerations),
@@ -269,21 +270,96 @@ export default function APICostDashboard({
   useEffect(() => {
     const t = setTimeout(() => {
       const now = Date.now()
-      setLive({
-        totalCost: base.totalCost,
-        breakdown: base.breakdown,
-        perGen: base.perGen,
-        series: [{ ts: now, total: base.totalCost }],
-        flashKey: 0,
-        lastTick: 0,
-        budget: base.budget,
+      if (simulate) {
+        setLive({
+          totalCost: base.totalCost,
+          breakdown: base.breakdown,
+          perGen: base.perGen,
+          series: [{ ts: now, total: base.totalCost }],
+          flashKey: 0,
+          lastTick: 0,
+          budget: base.budget,
+        })
+        return
+      }
+
+      setLive((prev) => {
+        const delta = Math.max(0, base.totalCost - safeNumber(prev.totalCost, 0))
+        const nextSeries = [...prev.series, { ts: now, total: base.totalCost }].slice(-180)
+        return {
+          ...prev,
+          totalCost: base.totalCost,
+          breakdown: base.breakdown,
+          perGen: base.perGen,
+          series: nextSeries,
+          flashKey: prev.flashKey + (delta > 0 ? 1 : 0),
+          lastTick: delta,
+          budget: base.budget,
+        }
       })
     }, 0)
     return () => clearTimeout(t)
-  }, [base])
+  }, [base, simulate])
 
-  // No simulation - just display static data from backend
-  // Could add real-time updates via SSE in the future
+  useEffect(() => {
+    if (!simulate) return undefined
+    const interval = Math.max(250, Math.round(safeNumber(updateInterval, 1000)))
+
+    const t = setInterval(() => {
+      const now = Date.now()
+
+      setLive((prev) => {
+        const cg = clamp(Math.round(safeNumber(currentGeneration, 0)), 0, Math.max(0, prev.perGen.length - 1))
+
+        const seconds = interval / 1000
+        const eventCount = Math.max(0, Math.round((0.8 + Math.random() * 2.2) * seconds))
+
+        const weights = SERVICES.map((s) => {
+          const c = safeNumber(prev.breakdown?.[s.key]?.cost, 0)
+          return c > 0 ? c : s.unitCost * 10
+        })
+
+        const breakdown = { ...prev.breakdown }
+        SERVICES.forEach((s) => {
+          breakdown[s.key] = { ...breakdown[s.key] }
+        })
+
+        let delta = 0
+        for (let i = 0; i < eventCount; i += 1) {
+          const svc = pickWeighted(SERVICES, weights)
+          breakdown[svc.key].calls += 1
+          breakdown[svc.key].cost = safeNumber(breakdown[svc.key].cost, 0) + svc.unitCost
+          delta += svc.unitCost
+        }
+
+        const overhead = eventCount > 0 ? (0.0004 + Math.random() * 0.0012) * seconds : 0
+        delta += overhead
+
+        if (delta <= 0) {
+          const nextSeries = [...prev.series, { ts: now, total: prev.totalCost }].slice(-180)
+          return { ...prev, series: nextSeries, lastTick: 0 }
+        }
+
+        const totalCost = prev.totalCost + delta
+        const perGen = prev.perGen.slice()
+        if (perGen.length) perGen[cg] = safeNumber(perGen[cg], 0) + delta
+
+        const series = [...prev.series, { ts: now, total: totalCost }].slice(-180)
+
+        return {
+          ...prev,
+          totalCost,
+          breakdown,
+          perGen,
+          series,
+          lastTick: delta,
+          flashKey: prev.flashKey + 1,
+        }
+      })
+    }, interval)
+
+    return () => clearInterval(t)
+  }, [currentGeneration, simulate, updateInterval])
 
   const animatedTotal = useAnimatedNumber(live.totalCost, { durationMs: 520 })
   const animatedRate = useAnimatedNumber(
@@ -621,4 +697,3 @@ export default function APICostDashboard({
     </div>
   )
 }
-
