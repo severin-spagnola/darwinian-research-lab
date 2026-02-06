@@ -179,9 +179,10 @@ async def create_run(request: CreateRunRequest, background_tasks: BackgroundTask
         time_dict = request.time_config.copy()
         if 'date_range' in time_dict and time_dict['date_range']:
             dr = time_dict['date_range']
+            # DateRange expects YYYY-MM-DD strings, not datetime objects
             time_dict['date_range'] = DateRange(
-                start=datetime.fromisoformat(dr['start'].replace('Z', '+00:00')),
-                end=datetime.fromisoformat(dr['end'].replace('Z', '+00:00'))
+                start=dr['start'][:10] if isinstance(dr['start'], str) else dr['start'].strftime('%Y-%m-%d'),
+                end=dr['end'][:10] if isinstance(dr['end'], str) else dr['end'].strftime('%Y-%m-%d')
             )
         time_config = TimeConfig(**time_dict)
 

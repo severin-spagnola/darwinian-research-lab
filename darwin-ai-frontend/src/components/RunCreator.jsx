@@ -58,8 +58,8 @@ Create a gap-and-go momentum trading strategy:
             timeframe: '5min',
             lookback_days: 90,
             date_range: {
-              start: '2024-10-01T00:00:00',
-              end: '2025-01-31T00:00:00'
+              start: '2024-10-01',
+              end: '2025-01-31'
             }
           },
           generations: 2,
