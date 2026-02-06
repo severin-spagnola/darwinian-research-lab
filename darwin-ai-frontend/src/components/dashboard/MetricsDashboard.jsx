@@ -40,7 +40,13 @@ function pct(n01, digits = 1) {
 }
 
 function fitnessOf(s) {
-  return safeNumber(s?.results?.phase3?.aggregated_fitness, safeNumber(s?.phase3?.aggregated_fitness, 0))
+  // Try Phase 3 aggregated fitness first
+  const p3 = s?.results?.phase3?.aggregated_fitness ?? s?.phase3?.aggregated_fitness
+  if (p3 !== null && p3 !== undefined) return safeNumber(p3, 0)
+
+  // Fallback to Phase 2 fitness
+  const p2 = s?.results?.fitness ?? s?.fitness
+  return safeNumber(p2, 0)
 }
 
 function strategyLabel(s) {

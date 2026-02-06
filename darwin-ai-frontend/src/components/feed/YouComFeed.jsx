@@ -17,9 +17,9 @@ import {
 import { generateYouComResponse } from '../../data/mockDataGenerator.js'
 import {
   makeGenerationQueries,
-  searchYouCom,
   YouComRateLimitError,
 } from '../../utils/youcomAPI.js'
+import { searchYouCom } from '../../api/client.js'
 
 const MotionDiv = motion.div
 const MotionSpan = motion.span

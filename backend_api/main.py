@@ -55,10 +55,16 @@ def _record_error(entry: Dict[str, Any]):
 
 app = FastAPI(title="Darwin Evolution API", version="1.0.0")
 
-# CORS middleware for local development
+# CORS middleware for local development and production
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        # Add your production frontend domain here:
+        # "https://your-frontend.vercel.app",
+        # "https://your-frontend.netlify.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -517,6 +523,41 @@ async def get_research_pack(pack_id: str):
         raise HTTPException(status_code=404, detail="Research pack not found")
 
     return {"ok": True, "pack": pack.model_dump()}
+
+
+@app.post("/api/research/search")
+async def search_youcom(request: Request):
+    """Proxy endpoint for You.com searches (keeps API key secret).
+
+    Request body: {
+        query: string,
+        n_results?: number (default 5)
+    }
+
+    Returns: { ok: true, results: [...] }
+    """
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON body")
+
+    query = body.get("query")
+    if not query:
+        raise HTTPException(status_code=400, detail="query is required")
+
+    n_results = body.get("n_results", 5)
+
+    try:
+        from research.youcom import search_with_cache
+        sources = search_with_cache(query, n_results=n_results)
+        # Convert ResearchSource objects to dicts
+        results = [s.model_dump() if hasattr(s, 'model_dump') else s for s in sources]
+        return {"ok": True, "results": results}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"You.com search failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Search failed")
 
 
 @app.get("/api/runs/{run_id}/memos/{graph_id}")

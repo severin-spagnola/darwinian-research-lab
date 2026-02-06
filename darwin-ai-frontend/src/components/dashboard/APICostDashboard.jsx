@@ -25,23 +25,23 @@ const MotionSpan = motion.span
 
 const SERVICES = [
   {
-    key: 'you_com_searches',
-    label: 'You.com Searches',
-    unitCost: 0.002,
+    key: 'compile',
+    label: 'LLM Compile',
+    unitCost: 0.03,
     bar: 'from-info-400/70 via-info-300/55 to-info-200/45',
     chip: 'bg-info-500/14 text-info-200 ring-info-500/25',
   },
   {
-    key: 'llm_mutations',
-    label: 'LLM Mutations',
+    key: 'mutate',
+    label: 'LLM Mutate',
     unitCost: 0.03,
     bar: 'from-warning-300/75 via-warning-200/55 to-warning-300/35',
     chip: 'bg-warning-500/14 text-warning-200 ring-warning-500/25',
   },
   {
-    key: 'validation_runs',
-    label: 'Validation Runs',
-    unitCost: 0.008,
+    key: 'cache_hits',
+    label: 'Cache Hits',
+    unitCost: 0,
     bar: 'from-primary-400/70 via-primary-300/55 to-info-400/35',
     chip: 'bg-primary-500/14 text-primary-200 ring-primary-500/25',
   },
@@ -82,22 +82,49 @@ function pickWeighted(items, weights) {
 function normalizeCostData(costData, totalGenerations) {
   const raw = costData ?? {}
 
-  const breakdown = raw.breakdown ?? {}
-  const normalizedBreakdown = {}
-  SERVICES.forEach((s) => {
-    const row = breakdown[s.key] ?? {}
-    normalizedBreakdown[s.key] = {
-      calls: Math.max(0, Math.round(safeNumber(row.calls, 0))),
-      cost: Math.max(0, safeNumber(row.cost, 0)),
-    }
-  })
+  // Handle both old mock format and new backend format
+  const isBackendFormat = raw.total_calls !== undefined || raw.by_stage !== undefined
 
-  // Prefer declared total_cost; otherwise sum breakdown costs.
-  const sumBreakdown = SERVICES.reduce(
-    (acc, s) => acc + safeNumber(normalizedBreakdown[s.key]?.cost, 0),
+  const normalizedBreakdown = {}
+
+  if (isBackendFormat) {
+    // Backend format: { total_calls, estimated_cost_usd, by_stage: { compile, mutate }, cache_hits }
+    const byStage = raw.by_stage ?? {}
+
+    normalizedBreakdown.compile = {
+      calls: Math.max(0, Math.round(safeNumber(byStage.compile?.count, 0))),
+      cost: Math.max(0, safeNumber(byStage.compile?.count, 0) * 0.03),
+    }
+
+    normalizedBreakdown.mutate = {
+      calls: Math.max(0, Math.round(safeNumber(byStage.mutate?.count, 0))),
+      cost: Math.max(0, safeNumber(byStage.mutate?.count, 0) * 0.03),
+    }
+
+    normalizedBreakdown.cache_hits = {
+      calls: Math.max(0, Math.round(safeNumber(raw.cache_hits, 0))),
+      cost: 0, // Cache hits are free
+    }
+  } else {
+    // Old mock format: { breakdown: { service_key: { calls, cost } } }
+    const breakdown = raw.breakdown ?? {}
+    SERVICES.forEach((s) => {
+      const row = breakdown[s.key] ?? {}
+      normalizedBreakdown[s.key] = {
+        calls: Math.max(0, Math.round(safeNumber(row.calls, 0))),
+        cost: Math.max(0, safeNumber(row.cost, 0)),
+      }
+    })
+  }
+
+  // Calculate total cost
+  const sumBreakdown = Object.values(normalizedBreakdown).reduce(
+    (acc, item) => acc + safeNumber(item?.cost, 0),
     0,
   )
-  const totalCost = Math.max(0, safeNumber(raw.total_cost, sumBreakdown))
+  const totalCost = isBackendFormat
+    ? Math.max(0, safeNumber(raw.estimated_cost_usd, sumBreakdown))
+    : Math.max(0, safeNumber(raw.total_cost, sumBreakdown))
 
   // Cost per generation (scaled to match totalCost).
   const rawPerGen = Array.isArray(raw.cost_per_generation) ? raw.cost_per_generation : []
@@ -255,68 +282,8 @@ export default function APICostDashboard({
     return () => clearTimeout(t)
   }, [base])
 
-  useEffect(() => {
-    const interval = Math.max(250, Math.round(safeNumber(updateInterval, 1000)))
-
-    const t = setInterval(() => {
-      const now = Date.now()
-
-      setLive((prev) => {
-        const cg = clamp(Math.round(safeNumber(currentGeneration, 0)), 0, Math.max(0, prev.perGen.length - 1))
-
-        // Convert interval to approximate event count; keep it readable and "live".
-        const seconds = interval / 1000
-        const eventCount = Math.max(0, Math.round((0.8 + Math.random() * 2.2) * seconds))
-
-        // Weight services by current spend share (fallback to unit cost weights).
-        const weights = SERVICES.map((s) => {
-          const c = safeNumber(prev.breakdown?.[s.key]?.cost, 0)
-          return c > 0 ? c : s.unitCost * 10
-        })
-
-        const breakdown = { ...prev.breakdown }
-        SERVICES.forEach((s) => {
-          breakdown[s.key] = { ...breakdown[s.key] }
-        })
-
-        let delta = 0
-        for (let i = 0; i < eventCount; i += 1) {
-          const svc = pickWeighted(SERVICES, weights)
-          breakdown[svc.key].calls += 1
-          breakdown[svc.key].cost = safeNumber(breakdown[svc.key].cost, 0) + svc.unitCost
-          delta += svc.unitCost
-        }
-
-        // Small “overhead” noise for non-call costs (logging, orchestration, etc.).
-        const overhead = eventCount > 0 ? (0.0004 + Math.random() * 0.0012) * seconds : 0
-        delta += overhead
-
-        if (delta <= 0) {
-          // Still advance the time series so burn rate stays well-defined.
-          const nextSeries = [...prev.series, { ts: now, total: prev.totalCost }].slice(-180)
-          return { ...prev, series: nextSeries, lastTick: 0 }
-        }
-
-        const totalCost = prev.totalCost + delta
-        const perGen = prev.perGen.slice()
-        if (perGen.length) perGen[cg] = safeNumber(perGen[cg], 0) + delta
-
-        const series = [...prev.series, { ts: now, total: totalCost }].slice(-180)
-
-        return {
-          ...prev,
-          totalCost,
-          breakdown,
-          perGen,
-          series,
-          lastTick: delta,
-          flashKey: prev.flashKey + 1,
-        }
-      })
-    }, interval)
-
-    return () => clearInterval(t)
-  }, [currentGeneration, updateInterval])
+  // No simulation - just display static data from backend
+  // Could add real-time updates via SSE in the future
 
   const animatedTotal = useAnimatedNumber(live.totalCost, { durationMs: 520 })
   const animatedRate = useAnimatedNumber(
