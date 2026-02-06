@@ -253,11 +253,13 @@ function EntryCard({
 }
 
 export default function YouComFeed({
+  entries: externalEntries,
   isActive = true,
   currentGeneration = 0,
   onInsightGenerated,
 }) {
-  const [entries, setEntries] = useState([])
+  const isControlled = Array.isArray(externalEntries)
+  const [internalEntries, setInternalEntries] = useState([])
   const [isSearching, setIsSearching] = useState(false)
   const [activeQuery, setActiveQuery] = useState('')
   const [viewAll, setViewAll] = useState(false)
@@ -267,6 +269,8 @@ export default function YouComFeed({
   const scrollRef = useRef(null)
   const endRef = useRef(null)
   const genRef = useRef(currentGeneration)
+
+  const entries = isControlled ? externalEntries : internalEntries
 
   const visibleEntries = useMemo(() => {
     if (viewAll) return entries
@@ -286,6 +290,7 @@ export default function YouComFeed({
   }, [entries.length, viewAll])
 
   async function runSearch(query, { reason } = {}) {
+    if (isControlled) return
     const q = String(query ?? '').trim()
     if (!q) return
 
@@ -299,7 +304,7 @@ export default function YouComFeed({
 
     setIsSearching(true)
     setActiveQuery(q)
-    setEntries((prev) => [
+    setInternalEntries((prev) => [
       ...prev,
       {
         id,
@@ -331,7 +336,7 @@ export default function YouComFeed({
       const results = Array.isArray(resp?.results) ? resp.results : []
       const { insights, mutation_suggestions } = inferInsights(results)
 
-      setEntries((prev) =>
+      setInternalEntries((prev) =>
         prev.map((e) =>
           e.id === id
             ? {
@@ -364,7 +369,7 @@ export default function YouComFeed({
 
       const mock = generateYouComResponse(q)
 
-      setEntries((prev) =>
+      setInternalEntries((prev) =>
         prev.map((e) =>
           e.id === id
             ? {
@@ -398,6 +403,7 @@ export default function YouComFeed({
 
   useEffect(() => {
     if (!isActive) return undefined
+    if (isControlled) return undefined
 
     const queries = makeGenerationQueries(currentGeneration)
     const genStartQuery = queries[0]
@@ -452,18 +458,20 @@ export default function YouComFeed({
             )}
           </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              const queries = makeGenerationQueries(currentGeneration)
-              const manual = queries[1] ?? queries[0]
-              runSearch(manual, { reason: 'manual' })
-            }}
-            className="inline-flex items-center gap-2 rounded-xl bg-panel-elevated px-3 py-2 text-xs font-semibold text-text ring-1 ring-inset ring-border/70 transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-          >
-            <RefreshCw className="h-4 w-4 text-text-muted" />
-            Search now
-          </button>
+          {!isControlled ? (
+            <button
+              type="button"
+              onClick={() => {
+                const queries = makeGenerationQueries(currentGeneration)
+                const manual = queries[1] ?? queries[0]
+                runSearch(manual, { reason: 'manual' })
+              }}
+              className="inline-flex items-center gap-2 rounded-xl bg-panel-elevated px-3 py-2 text-xs font-semibold text-text ring-1 ring-inset ring-border/70 transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
+            >
+              <RefreshCw className="h-4 w-4 text-text-muted" />
+              Search now
+            </button>
+          ) : null}
         </div>
       </div>
 
