@@ -2,13 +2,15 @@ import { useEffect, useMemo, useState } from 'react'
 
 import Layout from './components/Layout.jsx'
 import EvolutionArena from './components/arena/EvolutionArena.jsx'
+import APICostDashboard from './components/dashboard/APICostDashboard.jsx'
+import MetricsDashboard from './components/dashboard/MetricsDashboard.jsx'
+import YouComFeed from './components/feed/YouComFeed.jsx'
 import ValidationViewer from './components/validation/ValidationViewer.jsx'
 import LineageTree from './components/graph/LineageTree.jsx'
 import StrategyGraphViewer from './components/graph/StrategyGraphViewer.jsx'
 import {
   generateAPICosts,
   generateEvolutionRun,
-  generateYouComResponse,
 } from './data/mockDataGenerator.js'
 
 export default function App() {
@@ -53,10 +55,6 @@ function DarwinAIDemo() {
     return { nodes, edges, roots: run.lineage?.roots ?? [] }
   }, [generations, run.lineage?.edges, run.lineage?.roots])
 
-  const you = useMemo(
-    () => generateYouComResponse('current macro regime and volatility'),
-    [],
-  )
   const api = useMemo(
     () => generateAPICosts(generations.length || 5, generations.flat().length),
     [generations],
@@ -132,92 +130,29 @@ function DarwinAIDemo() {
       </Layout.Lineage>
 
       <Layout.YouFeed>
-        <div className="space-y-3">
-          <div className="text-xs text-text-muted">
-            Query: <span className="font-mono text-text">{you.query}</span>
-          </div>
-          <div className="space-y-2">
-            {you.results.map((r) => (
-              <div
-                key={r}
-                className="rounded-xl border border-border/60 bg-panel-elevated px-4 py-3 text-sm text-text-muted"
-              >
-                {r}
-              </div>
-            ))}
-          </div>
-          <div className="rounded-xl border border-border/60 bg-panel-elevated p-4 text-sm">
-            <div className="text-xs font-semibold text-text">Insights</div>
-            <ul className="mt-2 list-disc pl-5 text-sm text-text-muted">
-              {you.insights.map((i) => (
-                <li key={i}>{i}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-xl border border-border/60 bg-panel-elevated p-4 text-sm">
-            <div className="text-xs font-semibold text-text">
-              Mutation Suggestions
-            </div>
-            <ul className="mt-2 list-disc pl-5 text-sm text-text-muted">
-              {you.mutation_suggestions.map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <YouComFeed
+          isActive={isPlaying}
+          currentGeneration={genIdx}
+          onInsightGenerated={() => {}}
+        />
       </Layout.YouFeed>
 
       <Layout.ApiCosts>
-        <div className="grid gap-3">
-          <div className="rounded-xl border border-border/60 bg-panel-elevated p-4">
-            <div className="text-xs text-text-muted">Total cost</div>
-            <div className="mt-1 font-mono text-xl font-semibold text-text">
-              ${api.total_cost.toFixed(2)}
-            </div>
-          </div>
-          {Object.entries(api.breakdown).map(([k, v]) => (
-            <div
-              key={k}
-              className="flex items-center justify-between rounded-xl border border-border/60 bg-panel-elevated px-4 py-3 text-sm"
-            >
-              <div className="text-text-muted">{k}</div>
-              <div className="font-mono text-text">
-                {v.calls} calls · ${v.cost.toFixed(2)}
-              </div>
-            </div>
-          ))}
-        </div>
+        <APICostDashboard
+          costData={api}
+          currentGeneration={genIdx}
+          totalGenerations={generations.length || 5}
+          updateInterval={1000}
+        />
       </Layout.ApiCosts>
 
       <Layout.Metrics>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-border/60 bg-panel-elevated p-4">
-            <div className="text-xs text-text-muted">Champion</div>
-            <div className="mt-1 truncate text-sm font-semibold text-text">
-              {run.champion?.id ?? '—'}
-            </div>
-            <div className="mt-2 text-xs text-text-muted">
-              Fitness{' '}
-              <span className="font-mono text-text">
-                {(run.champion?.results?.phase3?.aggregated_fitness ?? 0).toFixed(3)}
-              </span>
-            </div>
-          </div>
-          <div className="rounded-xl border border-border/60 bg-panel-elevated p-4">
-            <div className="text-xs text-text-muted">Survival rate</div>
-            <div className="mt-1 font-mono text-xl font-semibold text-text">
-              {(run.stats?.survival_rate ?? 0).toFixed(2)}
-            </div>
-            <div className="mt-2 text-xs text-text-muted">
-              Total strategies{' '}
-              <span className="font-mono text-text">
-                {run.stats?.total_strategies ?? '—'}
-              </span>
-            </div>
-          </div>
-        </div>
+        <MetricsDashboard
+          generationStats={{ strategies: currentGeneration, generationNumber: genIdx }}
+          selectedStrategy={selectedStrategy}
+          allGenerations={generations}
+        />
       </Layout.Metrics>
     </Layout>
   )
 }
-
