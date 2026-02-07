@@ -414,7 +414,7 @@ export default function App() {
                   currentGeneration={currentGeneration}
                   totalGenerations={totalGenerations}
                   updateInterval={1000}
-                  simulate={!useRealData}
+                  simulate={true}
                 />
               </Layout.ApiCosts>
 
