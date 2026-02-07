@@ -97,10 +97,20 @@ def complete_json(
             # Log raw response
             _log_response("anthropic", system_prompt, user_prompt, raw_response, model)
 
+            # Strip markdown code blocks if present (Claude often wraps JSON)
+            cleaned = raw_response.strip()
+            if cleaned.startswith("```"):
+                # Remove opening ```json or ``` line
+                first_newline = cleaned.index('\n') if '\n' in cleaned else len(cleaned)
+                cleaned = cleaned[first_newline + 1:]
+                # Remove closing ```
+                if cleaned.rstrip().endswith("```"):
+                    cleaned = cleaned.rstrip()[:-3].rstrip()
+
             parsed = None
             parse_error = None
             try:
-                parsed = json.loads(raw_response)
+                parsed = json.loads(cleaned)
             except json.JSONDecodeError as exc:
                 parse_error = str(exc)
                 _record(transcript_meta, parsed=None, error=parse_error, raw_text=raw_response)
