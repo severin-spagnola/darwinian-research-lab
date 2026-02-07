@@ -54,25 +54,19 @@ Create a gap-and-go momentum trading strategy:
           seed_prompt: prompt,
           universe: {
             type: 'explicit',
-            symbols: ['TSLA', 'NVDA', 'AAPL', 'AMD', 'COIN']
+            symbols: ['TSLA', 'NVDA']
           },
           time_config: {
             timeframe: '5m',
-            lookback_days: 90,
+            lookback_days: 30,
             date_range: {
-              start: '2024-10-01',
+              start: '2025-01-01',
               end: '2025-01-31'
             }
           },
-          generations: 2,
-          survivors_per_gen: 3,
+          generations: 1,
+          survivors_per_gen: 2,
           children_per_survivor: 2,
-          phase3_config: {
-            n_episodes: 5,
-            min_months: 1,
-            max_months: 2,
-            sampling_mode: 'uniform_random'
-          },
           demo_mode: demoMode
         })
       })
@@ -171,14 +165,14 @@ Create a gap-and-go momentum trading strategy:
               <p className="text-sm text-text-muted">
                 {demoMode
                   ? 'Loading pre-computed results...'
-                  : 'This will take 10-15 minutes. Darwin is compiling strategies, fetching data, and running Phase 3 validation...'}
+                  : 'Running live evolution (~2-3 min). Compiling strategy, fetching market data, backtesting...'}
               </p>
             )}
           </div>
 
           <div className="p-4 bg-info-500/10 border border-info-500/30 rounded-xl">
             <p className="text-xs text-info-300">
-              <strong>Configuration:</strong> 2 generations • 3 survivors per gen • 5 Phase 3 episodes with event tagging • 5m timeframe • Oct 2024 - Jan 2025
+              <strong>Configuration:</strong> 1 generation • 2 survivors • 2 children each • 5m timeframe • Jan 2025 • TSLA + NVDA
             </p>
           </div>
         </form>

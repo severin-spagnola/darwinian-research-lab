@@ -195,7 +195,7 @@ def _run_darwin_task(
         symbols = universe.resolve_symbols()
         dr = time_config.date_range
 
-        # Fetch data for first symbol (Darwin operates per-symbol)
+        # Fetch data for first successful symbol (break early for speed)
         data = None
         for sym in symbols:
             try:
@@ -207,9 +207,9 @@ def _run_darwin_task(
                 )
                 if df is not None and not df.empty:
                     logger.info(f"[{run_id}] Fetched {len(df)} bars for {sym}")
-                    if data is None:
-                        data = df  # Use first successful symbol
-                        logger.info(f"[{run_id}] Using {sym} as primary data source")
+                    data = df
+                    logger.info(f"[{run_id}] Using {sym} as primary data source")
+                    break  # Use first successful symbol, skip rest
             except Exception as e:
                 logger.warning(f"[{run_id}] Failed to fetch {sym}: {e}")
 

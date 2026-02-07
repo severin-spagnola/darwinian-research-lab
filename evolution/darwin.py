@@ -44,6 +44,7 @@ def run_darwin(
     min_survivors_floor: int = 1,
     max_total_evals: int = 200,
     compile_provider: str = "openai",
+    compile_model: str = "gpt-4o-mini",
     mutate_provider: str = "openai",
     mutate_model: str = "gpt-4o-mini",
     rescue_mode: bool = False,
@@ -91,6 +92,7 @@ def run_darwin(
         'min_survivors_floor': min_survivors_floor,
         'max_total_evals': max_total_evals,
         'compile_provider': compile_provider,
+        'compile_model': compile_model,
         'mutate_provider': mutate_provider,
         'mutate_model': mutate_model,
         'rescue_mode': rescue_mode,
@@ -115,6 +117,7 @@ def run_darwin(
                 universe=universe,
                 time_config=time_config,
                 provider=compile_provider,
+                model=compile_model,
                 run_id=run_id,
             )
             print(f"✓ Adam compiled: {adam.graph_id}")

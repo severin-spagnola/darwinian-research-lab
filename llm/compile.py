@@ -25,6 +25,7 @@ def compile_nl_to_graph(
     time_config: TimeConfig,
     allowed_nodes: List[str] = None,
     provider: str = "openai",
+    model: Optional[str] = None,
     temperature: float = 0.7,
     run_id: Optional[str] = None,
 ) -> StrategyGraph:
@@ -62,21 +63,27 @@ def compile_nl_to_graph(
     # Call LLM
     transcript_meta = _build_transcript_meta(run_id, "compile_initial", artifact="adam")
     if provider == "openai":
-        llm_output = client_openai.complete_json(
+        kwargs = dict(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
             temperature=temperature,
             max_tokens=4000,
             transcript_meta=transcript_meta,
         )
+        if model:
+            kwargs["model"] = model
+        llm_output = client_openai.complete_json(**kwargs)
     elif provider == "anthropic":
-        llm_output = client_anthropic.complete_json(
+        kwargs = dict(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
             temperature=temperature,
             max_tokens=4000,
             transcript_meta=transcript_meta,
         )
+        if model:
+            kwargs["model"] = model
+        llm_output = client_anthropic.complete_json(**kwargs)
     else:
         raise ValueError(f"Unknown provider: {provider}")
 
