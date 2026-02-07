@@ -122,24 +122,33 @@ def run_darwin(
 
     # Compile or use seed graph
     if nl_text:
-        print(f"\n🤖 Compiling NL strategy using {compile_provider}/{compile_model}...")
-        _t_compile = _time.monotonic()
-        try:
-            adam = compile_nl_to_graph(
-                nl_text=nl_text,
-                universe=universe,
-                time_config=time_config,
-                provider=compile_provider,
-                model=compile_model,
-                run_id=run_id,
-            )
-            print(f"✓ Adam compiled: {adam.graph_id} ({_time.monotonic() - _t_compile:.1f}s)")
-        except (ValueError, Exception) as e:
-            # Compilation failed - save error summary and exit gracefully
-            print(f"❌ Compilation failed: {e}")
+        adam = None
+        # Try primary compile provider, fall back to openai if it fails
+        for _provider, _model in [
+            (compile_provider, compile_model),
+            ("openai", "gpt-4o-mini"),  # fallback
+        ]:
+            print(f"\n🤖 Compiling NL strategy using {_provider}/{_model}...")
+            _t_compile = _time.monotonic()
+            try:
+                adam = compile_nl_to_graph(
+                    nl_text=nl_text,
+                    universe=universe,
+                    time_config=time_config,
+                    provider=_provider,
+                    model=_model,
+                    run_id=run_id,
+                )
+                print(f"✓ Adam compiled: {adam.graph_id} ({_time.monotonic() - _t_compile:.1f}s)")
+                break
+            except Exception as e:
+                print(f"❌ Compilation failed with {_provider}/{_model} ({_time.monotonic() - _t_compile:.1f}s): {e}")
+                continue
+
+        if adam is None:
             error_summary = {
                 "status": "failed_compile",
-                "error": str(e),
+                "error": "All compile providers failed",
                 "total_evaluations": 0,
                 "best_fitness": None,
                 "best_strategy": None,
@@ -154,7 +163,7 @@ def run_darwin(
                 total_evals=0,
                 extra=error_summary,
             )
-            raise ValueError(f"Compilation failed: {e}") from e
+            raise ValueError("Compilation failed: all providers failed")
     elif seed_graph:
         adam = seed_graph
         print(f"\n📈 Using seed graph: {adam.graph_id}")

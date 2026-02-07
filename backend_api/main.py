@@ -883,6 +883,20 @@ async def list_run_llm_transcripts(run_id: str):
     return {"transcripts": transcripts}
 
 
+@app.get("/api/runs/{run_id}/llm/usage")
+async def get_run_llm_usage(run_id: str):
+    """Return LLM usage for a run. Returns empty budget if no data exists (never 404).
+
+    IMPORTANT: This route MUST be above the /llm/{filename} catch-all route,
+    otherwise FastAPI matches {filename}='usage' and returns 404.
+    """
+    try:
+        usage = _read_budget(run_id)
+        return usage
+    except Exception:
+        return LLMBudget().to_dict()
+
+
 @app.get("/api/runs/{run_id}/llm/{filename}")
 async def get_run_llm_transcript(run_id: str, filename: str):
     """Return a specific LLM transcript file for a run."""
@@ -1327,17 +1341,6 @@ async def debug_errors():
 async def health():
     """Health check endpoint."""
     return {"status": "ok", "version": "1.0.0"}
-
-
-@app.get("/api/runs/{run_id}/llm/usage")
-async def get_run_llm_usage(run_id: str):
-    """Return LLM usage for a run. Returns empty budget if no data exists (never 404)."""
-    try:
-        usage = _read_budget(run_id)
-        return usage
-    except Exception:
-        # Return empty budget instead of 404 - frontend polls this constantly
-        return LLMBudget().to_dict()
 
 
 @app.get("/api/llm/usage")
