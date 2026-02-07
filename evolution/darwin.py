@@ -44,7 +44,8 @@ def run_darwin(
     min_survivors_floor: int = 1,
     max_total_evals: int = 200,
     compile_provider: str = "openai",
-    mutate_provider: str = "anthropic",
+    mutate_provider: str = "openai",
+    mutate_model: str = "gpt-4o-mini",
     rescue_mode: bool = False,
     initial_capital: float = 100000.0,
     run_id: Optional[str] = None,
@@ -91,6 +92,7 @@ def run_darwin(
         'max_total_evals': max_total_evals,
         'compile_provider': compile_provider,
         'mutate_provider': mutate_provider,
+        'mutate_model': mutate_model,
         'rescue_mode': rescue_mode,
     }
     # Include Phase 3 config for reproducibility
@@ -314,6 +316,7 @@ def run_darwin(
                     results_summary=results_summary,
                     num_children=branching,
                     provider=mutate_provider,
+                    model=mutate_model,
                     run_id=run_id,
                 )
             except Exception as e:

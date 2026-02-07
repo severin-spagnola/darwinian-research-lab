@@ -20,6 +20,7 @@ def propose_child_patches(
     allowed_patch_ops: List[str] = None,
     num_children: int = 3,
     provider: str = "anthropic",
+    model: Optional[str] = None,
     temperature: float = 0.8,
     run_id: Optional[str] = None,
 ) -> List[PatchSet]:
@@ -68,21 +69,27 @@ def propose_child_patches(
     }
 
     if provider == "openai":
-        llm_output = client_openai.complete_json(
+        kwargs = dict(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
             temperature=temperature,
             max_tokens=4000,
             transcript_meta=transcript_meta,
         )
+        if model:
+            kwargs["model"] = model
+        llm_output = client_openai.complete_json(**kwargs)
     elif provider == "anthropic":
-        llm_output = client_anthropic.complete_json(
+        kwargs = dict(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
             temperature=temperature,
             max_tokens=4000,
             transcript_meta=transcript_meta,
         )
+        if model:
+            kwargs["model"] = model
+        llm_output = client_anthropic.complete_json(**kwargs)
     else:
         raise ValueError(f"Unknown provider: {provider}")
 
