@@ -20,7 +20,7 @@ import config
 # ============================================================================
 
 YOUCOM_API_KEY = os.getenv("YOUCOM_API_KEY", "")
-YOUCOM_API_URL = "https://api.ydc-index.io/search"
+YOUCOM_API_URL = "https://ydc-index.io/v1/search"
 TIMEOUT_SECONDS = 10
 MAX_RETRIES = 2
 RETRY_DELAY = 1.0
@@ -57,7 +57,7 @@ class YouComClient:
             raise ValueError("YOUCOM_API_KEY not set")
 
         headers = {"X-API-Key": self.api_key}
-        params = {"query": query, "num_web_results": n_results}
+        params = {"query": query, "count": n_results}
 
         for attempt in range(MAX_RETRIES + 1):
             try:
