@@ -51,6 +51,7 @@ def run_darwin(
     initial_capital: float = 100000.0,
     run_id: Optional[str] = None,
     phase3_config: Optional[Phase3Config] = None,
+    max_runtime_seconds: float = 300.0,  # Hard cap: 5 minutes
 ) -> RunSummary:
     """Run Darwin evolution on a strategy.
 
@@ -109,6 +110,15 @@ def run_darwin(
     storage.save_config(config_dict)
 
     import time as _time
+    _t_run_start = _time.monotonic()
+    print(f"\n⏱️  Hard timeout: {max_runtime_seconds:.0f}s ({max_runtime_seconds/60:.1f} min)")
+
+    def _timed_out():
+        elapsed = _time.monotonic() - _t_run_start
+        if elapsed >= max_runtime_seconds:
+            print(f"\n🛑 HARD TIMEOUT after {elapsed:.1f}s — saving results and exiting")
+            return True
+        return False
 
     # Compile or use seed graph
     if nl_text:
@@ -226,9 +236,14 @@ def run_darwin(
 
     # Evolution loop
     for gen in range(depth):
+        _t_gen_start = _time.monotonic()
+        _elapsed_total = _t_gen_start - _t_run_start
         print(f"\n{'='*80}")
-        print(f"GENERATION {gen+1}/{depth}")
+        print(f"GENERATION {gen+1}/{depth}  [elapsed: {_elapsed_total:.1f}s / {max_runtime_seconds:.0f}s]")
         print(f"{'='*80}")
+
+        if _timed_out():
+            break
 
         # Select parents: survivors + mutate_only (grace period) strategies
         mutable = [r for r in current_gen if r.can_mutate()]
@@ -300,9 +315,11 @@ def run_darwin(
         next_gen = []
 
         for parent_idx, parent_result in enumerate(parents, 1):
-            # Check eval budget
+            # Check eval budget and timeout
             if len(all_evaluations) >= max_total_evals:
                 print(f"\n⚠️  Hit max_total_evals ({max_total_evals}) - stopping")
+                break
+            if _timed_out():
                 break
 
             print(f"\n[Parent {parent_idx}/{len(parents)}] {parent_result.graph_id}")
@@ -335,8 +352,10 @@ def run_darwin(
 
             # Apply patches and evaluate children
             for patch_idx, patch in enumerate(patches, 1):
-                # Check eval budget again
+                # Check eval budget and timeout
                 if len(all_evaluations) >= max_total_evals:
+                    break
+                if _timed_out():
                     break
 
                 print(f"  [{patch_idx}/{len(patches)}] Applying patch {patch.patch_id}...")
@@ -391,7 +410,9 @@ def run_darwin(
         gen_stats['rescue_from_best_dead_triggered'] = rescue_from_best_dead_triggered
         generation_stats_list.append(gen_stats)
 
-        print(f"\n📊 Generation {gen+1} Summary:")
+        _gen_elapsed = _time.monotonic() - _t_gen_start
+        _total_elapsed = _time.monotonic() - _t_run_start
+        print(f"\n📊 Generation {gen+1} Summary ({_gen_elapsed:.1f}s, total {_total_elapsed:.1f}s/{max_runtime_seconds:.0f}s):")
         print(f"  Evaluated: {gen_stats['total']}")
         print(f"  Survivors: {gen_stats['survivors']} ({gen_stats['survivor_rate']:.1%})")
         if survivor_floor_triggered:

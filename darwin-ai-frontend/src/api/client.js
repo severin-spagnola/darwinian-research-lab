@@ -28,7 +28,12 @@ async function apiFetch(endpoint, options = {}) {
 
     return await response.json()
   } catch (error) {
-    console.error(`API Error (${endpoint}):`, error)
+    // Mute noisy endpoints that get polled frequently
+    const mutePatterns = ['/llm/usage']
+    const isMuted = mutePatterns.some((p) => endpoint.includes(p))
+    if (!isMuted) {
+      console.error(`API Error (${endpoint}):`, error)
+    }
     throw error
   }
 }
