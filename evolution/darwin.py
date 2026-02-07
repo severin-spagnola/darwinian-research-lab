@@ -43,8 +43,8 @@ def run_darwin(
     survivors_per_layer: int = 5,
     min_survivors_floor: int = 1,
     max_total_evals: int = 200,
-    compile_provider: str = "openai",
-    compile_model: str = "gpt-4o-mini",
+    compile_provider: str = "anthropic",
+    compile_model: str = "claude-sonnet-4-20250514",
     mutate_provider: str = "openai",
     mutate_model: str = "gpt-4o-mini",
     rescue_mode: bool = False,
@@ -108,9 +108,12 @@ def run_darwin(
         config_dict['phase3_config'] = p3_dict
     storage.save_config(config_dict)
 
+    import time as _time
+
     # Compile or use seed graph
     if nl_text:
-        print(f"\n🤖 Compiling NL strategy using {compile_provider}...")
+        print(f"\n🤖 Compiling NL strategy using {compile_provider}/{compile_model}...")
+        _t_compile = _time.monotonic()
         try:
             adam = compile_nl_to_graph(
                 nl_text=nl_text,
@@ -120,7 +123,7 @@ def run_darwin(
                 model=compile_model,
                 run_id=run_id,
             )
-            print(f"✓ Adam compiled: {adam.graph_id}")
+            print(f"✓ Adam compiled: {adam.graph_id} ({_time.monotonic() - _t_compile:.1f}s)")
         except (ValueError, Exception) as e:
             # Compilation failed - save error summary and exit gracefully
             print(f"❌ Compilation failed: {e}")
@@ -178,7 +181,9 @@ def run_darwin(
 
     # Evaluate Adam (generation 0)
     print(f"\n🔬 Evaluating Adam...")
+    _t_eval_adam = _time.monotonic()
     adam_result = _evaluate_target(adam, generation=0)
+    print(f"  Adam eval took {_time.monotonic() - _t_eval_adam:.1f}s")
     storage.save_evaluation(adam_result)
     if phase3_active:
         storage.save_phase3_report(adam_result)
@@ -312,7 +317,8 @@ def run_darwin(
             results_summary = create_results_summary(parent_result)
 
             # Propose child patches
-            print(f"  🤖 Generating {branching} mutations...")
+            print(f"  🤖 Generating {branching} mutations using {mutate_provider}/{mutate_model}...")
+            _t_mutate = _time.monotonic()
             try:
                 patches = propose_child_patches(
                     parent_graph=parent_graph,
@@ -322,8 +328,9 @@ def run_darwin(
                     model=mutate_model,
                     run_id=run_id,
                 )
+                print(f"  ✓ Mutations generated in {_time.monotonic() - _t_mutate:.1f}s")
             except Exception as e:
-                print(f"  ❌ Mutation generation failed: {e}")
+                print(f"  ❌ Mutation generation failed ({_time.monotonic() - _t_mutate:.1f}s): {e}")
                 continue
 
             # Apply patches and evaluate children
@@ -342,7 +349,9 @@ def run_darwin(
                     storage.save_patch(patch)
 
                     # Evaluate child (pass generation index for schedule)
+                    _t_child_eval = _time.monotonic()
                     child_result = _evaluate_target(child, generation=gen)
+                    print(f"    Child eval took {_time.monotonic() - _t_child_eval:.1f}s")
                     storage.save_evaluation(child_result)
                     if phase3_active:
                         storage.save_phase3_report(child_result)

@@ -189,7 +189,9 @@ def _run_darwin_task(
     run_id: str,
 ):
     """Background task: fetch market data, then run Darwin."""
+    import time as _time
     try:
+        t0 = _time.monotonic()
         logger.info(f"[{run_id}] Fetching market data...")
         client = PolygonClient()
         symbols = universe.resolve_symbols()
@@ -213,6 +215,9 @@ def _run_darwin_task(
             except Exception as e:
                 logger.warning(f"[{run_id}] Failed to fetch {sym}: {e}")
 
+        t_data = _time.monotonic()
+        logger.info(f"[{run_id}] Data fetch took {t_data - t0:.1f}s")
+
         if data is None:
             logger.error(f"[{run_id}] No data fetched for any symbol!")
             return
@@ -230,7 +235,8 @@ def _run_darwin_task(
             run_id=run_id,
             rescue_mode=True,
         )
-        logger.info(f"[{run_id}] Darwin run complete!")
+        t_done = _time.monotonic()
+        logger.info(f"[{run_id}] Darwin run complete! Total: {t_done - t0:.1f}s (data: {t_data - t0:.1f}s, evolution: {t_done - t_data:.1f}s)")
 
     except Exception as e:
         logger.error(f"[{run_id}] Darwin run failed: {e}")
