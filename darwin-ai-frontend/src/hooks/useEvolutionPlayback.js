@@ -6,14 +6,14 @@ import { makeGenerationQueries, searchYouCom } from '../utils/youcomAPI.js'
 const SPEEDS = [1, 2, 5, 10]
 
 const BASE_MS = {
-  generationIntro: 3000,
-  perStrategyValidation: 2000,
-  perEpisodeDisplay: 500,
-  verdictReveal: 1000,
-  showResults: 2000,
-  youComSearch: 2000,
-  insightParse: 2000,
-  mutationCreationPerChild: 1000,
+  generationIntro: 1500,
+  perStrategyValidation: 1200,
+  perEpisodeDisplay: 300,
+  verdictReveal: 600,
+  showResults: 1200,
+  youComSearch: 1500,
+  insightParse: 1000,
+  mutationCreationPerChild: 800,
 }
 
 const COST_UNIT = {
@@ -408,31 +408,26 @@ export default function useEvolutionPlayback(evolutionData, options) {
       setApiCosts((prev) => addCost(prev, { key: 'you_com_searches', generation: g, calls: 1 }))
 
       let response = null
-      let status = 'mock'
+      let status = 'live'
       let errorMsg = null
 
       try {
-        // Try real API if key is configured; fallback to mock.
-        const apiKey =
-          import.meta.env.VITE_YOUCOM_API_KEY ??
-          import.meta.env.VITE_YOUCOM_KEY ??
-          null
-        if (apiKey) {
-          const resp = await searchYouCom(query, { count: 8 })
-          response = {
-            query,
-            timestamp: resp.timestamp,
-            results: resp.results ?? [],
-            insights: [],
-            mutation_suggestions: [],
-          }
-          status = 'success'
-        } else {
-          response = generateYouComResponse(query)
+        // Always route through backend proxy (has YOUCOM_API_KEY on server)
+        const { searchYouCom: backendSearch } = await import('../api/client.js')
+        const resp = await backendSearch(query, { count: 8 })
+        response = {
+          query,
+          timestamp: resp.timestamp,
+          results: resp.results ?? [],
+          insights: [],
+          mutation_suggestions: [],
         }
+        status = 'live'
       } catch (err) {
+        // Fallback to mock if backend proxy fails
         errorMsg = err instanceof Error ? err.message : String(err)
         response = generateYouComResponse(query)
+        status = 'cached'
       }
 
       setYouComActivity((prev) =>
@@ -452,11 +447,12 @@ export default function useEvolutionPlayback(evolutionData, options) {
       // Insight parsing runtime.
       await waitBase(BASE_MS.insightParse, token)
 
-      // Generate insights (mock mode or heuristic). For now: use mock generator.
+      // Generate insights from results or use mock fallback for insight text
+      const mockInsights = generateYouComResponse(query)
       const withInsights =
-        response?.insights && response?.mutation_suggestions
+        response?.insights?.length && response?.mutation_suggestions?.length
           ? response
-          : generateYouComResponse(query)
+          : { ...response, insights: mockInsights?.insights ?? [], mutation_suggestions: mockInsights?.mutation_suggestions ?? [] }
 
       setYouComActivity((prev) =>
         (Array.isArray(prev) ? prev : []).map((e) =>

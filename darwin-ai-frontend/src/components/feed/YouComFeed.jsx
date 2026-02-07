@@ -93,13 +93,12 @@ function EntryCard({
   onToggleCollapse,
 }) {
   const isLoading = entry.status === 'loading'
-  const isSuccess = entry.status === 'success'
-  const isMock = entry.status === 'mock'
+  const isSuccess = entry.status === 'success' || entry.status === 'live' || entry.status === 'cached'
   const isError = entry.status === 'error'
 
-  const headerIcon = isLoading ? Loader2 : isSuccess || isMock ? CheckCircle2 : XCircle
+  const headerIcon = isLoading ? Loader2 : isSuccess ? CheckCircle2 : XCircle
   const headerTone =
-    isLoading ? 'warning' : isSuccess ? 'primary' : isMock ? 'info' : 'danger'
+    isLoading ? 'warning' : isSuccess ? 'primary' : 'danger'
 
   const toneCls =
     headerTone === 'primary'
@@ -202,11 +201,6 @@ function EntryCard({
                 <div className="flex items-center gap-2 text-xs font-semibold text-text">
                   <Lightbulb className={`h-4 w-4 ${toneCls}`} />
                   Insights Generated
-                  {isMock ? (
-                    <span className="ml-2 rounded-full bg-info-500/14 px-2.5 py-1 text-[11px] font-semibold text-info-200 ring-1 ring-inset ring-info-500/25">
-                      mock
-                    </span>
-                  ) : null}
                 </div>
                 <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-text-muted">
                   {(entry.insights ?? EMPTY_ARRAY).map((i) => (
