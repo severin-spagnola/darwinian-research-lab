@@ -55,11 +55,11 @@ def _record_error(entry: Dict[str, Any]):
 
 app = FastAPI(title="Darwin Evolution API", version="1.0.0")
 
-# Seed demo fixtures into results directory on startup
+# Seed demo fixtures into results directory on startup (always overwrite to pick up new data)
 import shutil
 _demo_fixtures_dir = Path(__file__).parent / "demo_fixtures"
 _demo_target = config.RESULTS_DIR / "runs" / "demo_gap_and_go"
-if _demo_fixtures_dir.exists() and not _demo_target.exists():
+if _demo_fixtures_dir.exists() and (_demo_fixtures_dir / "demo_gap_and_go").exists():
     _demo_target.mkdir(parents=True, exist_ok=True)
     shutil.copytree(_demo_fixtures_dir / "demo_gap_and_go", _demo_target, dirs_exist_ok=True)
     logger.info("Seeded demo_gap_and_go fixture into results directory")
@@ -1325,8 +1325,13 @@ async def health():
 
 @app.get("/api/runs/{run_id}/llm/usage")
 async def get_run_llm_usage(run_id: str):
-    usage = _read_budget(run_id)
-    return usage
+    """Return LLM usage for a run. Returns empty budget if no data exists (never 404)."""
+    try:
+        usage = _read_budget(run_id)
+        return usage
+    except Exception:
+        # Return empty budget instead of 404 - frontend polls this constantly
+        return LLMBudget().to_dict()
 
 
 @app.get("/api/llm/usage")

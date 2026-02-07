@@ -1,0 +1,31 @@
+{
+  "graph_id": "gap_go_wider_gap",
+  "strategy_name": "Gap & Go Wider Gap Threshold",
+  "validation_report": {
+    "strategy_id": "gap_go_wider_gap",
+    "strategy_name": "Gap & Go Wider Gap Threshold",
+    "timestamp": "2026-02-06T15:47:10.142837",
+    "train_metrics": {
+      "return_pct": 8.47,
+      "sharpe": 2.01,
+      "max_dd_pct": -4.82,
+      "trades": 58,
+      "win_rate": 0.52
+    },
+    "holdout_metrics": {
+      "return_pct": 5.63,
+      "sharpe": 1.74,
+      "max_dd_pct": -5.11,
+      "trades": 22,
+      "win_rate": 0.50
+    },
+    "stability": {"concentration_penalty": 0.03, "cliff_penalty": 0.01, "consistency_score": 0.78},
+    "fragility": {"return_dispersion": 0.21, "sign_flip_penalty": 0.0, "fragility_score": 0.25},
+    "penalties": {"concentration": 0.03, "cliff": 0.01, "sign_flip": 0.0, "fragility": 0.125},
+    "failure_labels": [],
+    "fitness": 1.82
+  },
+  "fitness": 1.82,
+  "decision": "survive",
+  "kill_reason": []
+}

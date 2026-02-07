@@ -83,6 +83,7 @@ Create a gap-and-go momentum trading strategy:
       }
 
       const data = await response.json()
+      console.log(`[Darwin] Run created:`, data)
 
       if (onRunCreated) {
         onRunCreated(data.run_id)

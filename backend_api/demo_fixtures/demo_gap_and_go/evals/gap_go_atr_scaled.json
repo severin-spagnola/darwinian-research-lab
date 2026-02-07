@@ -1,0 +1,31 @@
+{
+  "graph_id": "gap_go_atr_scaled",
+  "strategy_name": "Gap & Go ATR-Scaled Targets",
+  "validation_report": {
+    "strategy_id": "gap_go_atr_scaled",
+    "strategy_name": "Gap & Go ATR-Scaled Targets",
+    "timestamp": "2026-02-06T15:47:12.718463",
+    "train_metrics": {
+      "return_pct": 9.31,
+      "sharpe": 1.92,
+      "max_dd_pct": -4.56,
+      "trades": 52,
+      "win_rate": 0.54
+    },
+    "holdout_metrics": {
+      "return_pct": 5.18,
+      "sharpe": 1.53,
+      "max_dd_pct": -5.82,
+      "trades": 19,
+      "win_rate": 0.47
+    },
+    "stability": {"concentration_penalty": 0.04, "cliff_penalty": 0.02, "consistency_score": 0.81},
+    "fragility": {"return_dispersion": 0.19, "sign_flip_penalty": 0.0, "fragility_score": 0.22},
+    "penalties": {"concentration": 0.04, "cliff": 0.02, "sign_flip": 0.0, "fragility": 0.11},
+    "failure_labels": [],
+    "fitness": 1.67
+  },
+  "fitness": 1.67,
+  "decision": "survive",
+  "kill_reason": []
+}

@@ -96,22 +96,24 @@ export default function App() {
 
     async function tryBackend() {
       try {
+        console.log('[Darwin] Checking backend for runs...')
         const data = await listRuns()
         const runs = data.runs || []
+        console.log(`[Darwin] Backend returned ${runs.length} runs:`, runs.map(r => r.run_id || r))
         if (cancelled) return
 
         if (runs.length > 0) {
-          // runs are objects like {run_id: "...", summary: {...}}
           const runIds = runs.map(r => r.run_id || r)
           setAvailableRuns(runIds)
           setSelectedRunId(runIds[0])
           setUseRealData(true)
+          console.log('[Darwin] Using real backend data, selected:', runIds[0])
         } else {
-          // Backend up but no runs - use mock
           setUseRealData(false)
+          console.log('[Darwin] No runs found, falling back to mock data')
         }
-      } catch {
-        // Backend unreachable - use mock
+      } catch (err) {
+        console.warn('[Darwin] Backend unreachable, using mock data:', err.message)
         if (!cancelled) setUseRealData(false)
       }
     }
@@ -129,40 +131,52 @@ export default function App() {
       try {
         setIsLoadingRun(true)
         setRunLoadError(null)
+        console.log(`[Darwin] Loading run: ${selectedRunId}`)
 
         // Poll summary because newly-created runs may not have results immediately.
-        const poll = async (fn, { maxAttempts = 60, delayMs = 2000 } = {}) => {
+        const poll = async (fn, label, { maxAttempts = 60, delayMs = 2000 } = {}) => {
           let lastErr = null
           for (let i = 0; i < maxAttempts; i += 1) {
             if (cancelled) return null
             try {
-              return await fn()
+              const result = await fn()
+              console.log(`[Darwin] ${label} loaded (attempt ${i + 1})`)
+              return result
             } catch (err) {
               lastErr = err
+              if (i < 3 || i % 10 === 0) console.log(`[Darwin] ${label} attempt ${i + 1} failed: ${err.message}`)
               await new Promise((r) => setTimeout(r, delayMs))
             }
           }
           throw lastErr ?? new Error('Timed out')
         }
 
-        const playbackData = await poll(() => getRunPlayback(selectedRunId), {
+        const playbackData = await poll(() => getRunPlayback(selectedRunId), 'playback', {
           maxAttempts: 60,
           delayMs: 2000,
         })
 
-        const usage = await poll(() => getRunLLMUsage(selectedRunId), {
-          maxAttempts: 20,
-          delayMs: 3000,
+        console.log(`[Darwin] Playback data:`, {
+          generations: playbackData?.generations?.length,
+          strategies: playbackData?.generations?.flat()?.length,
+          champion: playbackData?.champion?.id,
+        })
+
+        const usage = await poll(() => getRunLLMUsage(selectedRunId), 'llm/usage', {
+          maxAttempts: 3,
+          delayMs: 1000,
         }).catch(() => null)
 
         if (cancelled) return
         setRealRunData(playbackData)
         setRealLlmUsage(usage)
         setIsLoadingRun(false)
+        console.log('[Darwin] Run loaded successfully')
       } catch (err) {
         if (cancelled) return
         setIsLoadingRun(false)
         setRunLoadError(err instanceof Error ? err.message : String(err))
+        console.error('[Darwin] Failed to load run:', err)
       }
     }
 

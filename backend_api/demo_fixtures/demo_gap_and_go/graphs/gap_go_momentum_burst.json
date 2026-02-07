@@ -1,0 +1,46 @@
+{
+  "graph_id": "gap_go_momentum_burst",
+  "name": "Gap & Go Momentum Burst Entry",
+  "version": "1.0",
+  "universe": {
+    "type": "explicit",
+    "symbols": ["TSLA", "NVDA", "AAPL", "AMD", "COIN"],
+    "count": null
+  },
+  "time": {
+    "timeframe": "5m",
+    "session_tz": "America/New_York",
+    "date_range": {"start": "2024-10-01", "end": "2025-01-31"}
+  },
+  "constraints": {"execution": "next_bar_open", "no_lookahead": true, "max_nodes": 40},
+  "nodes": [
+    {"id": "market_data", "type": "MarketData", "params": {}, "inputs": {}},
+    {"id": "prev_close", "type": "SMA", "params": {"period": 1}, "inputs": {"series": ["market_data", "close"]}},
+    {"id": "gap_threshold", "type": "Constant", "params": {"value": 0.02}, "inputs": {}},
+    {"id": "gap_up_detection", "type": "Compare", "params": {"op": ">"}, "inputs": {"a": ["market_data", "open"], "b": ["prev_close", "sma"], "c": ["gap_threshold", "value"]}},
+    {"id": "sma_volume", "type": "SMA", "params": {"period": 10}, "inputs": {"series": ["market_data", "volume"]}},
+    {"id": "volume_confirmation", "type": "Compare", "params": {"op": ">"}, "inputs": {"a": ["market_data", "volume"], "b": ["sma_volume", "sma"]}},
+    {"id": "rsi", "type": "RSI", "params": {"period": 21}, "inputs": {"series": ["market_data", "close"]}},
+    {"id": "rsi_lower_bound", "type": "Constant", "params": {"value": 55}, "inputs": {}},
+    {"id": "rsi_upper_bound", "type": "Constant", "params": {"value": 80}, "inputs": {}},
+    {"id": "rsi_condition", "type": "Compare", "params": {"op": "between"}, "inputs": {"a": ["rsi", "rsi"], "b": ["rsi_lower_bound", "value"], "c": ["rsi_upper_bound", "value"]}},
+    {"id": "atr", "type": "ATR", "params": {"period": 10}, "inputs": {"high": ["market_data", "high"], "low": ["market_data", "low"], "close": ["market_data", "close"]}},
+    {"id": "atr_threshold", "type": "Constant", "params": {"value": 1.0}, "inputs": {}},
+    {"id": "atr_condition", "type": "Compare", "params": {"op": ">"}, "inputs": {"a": ["atr", "atr"], "b": ["atr_threshold", "value"]}},
+    {"id": "entry_signal_condition", "type": "And", "params": {}, "inputs": {"a": ["gap_up_detection", "result"], "b": ["volume_confirmation", "result"]}},
+    {"id": "entry_signal_confirm", "type": "And", "params": {}, "inputs": {"a": ["entry_signal_condition", "result"], "b": ["rsi_condition", "result"]}},
+    {"id": "entry_signal", "type": "EntrySignal", "params": {}, "inputs": {"condition": ["entry_signal_confirm", "result"]}},
+    {"id": "take_profit", "type": "TakeProfitFixed", "params": {"points": 0.04}, "inputs": {}},
+    {"id": "stop_loss", "type": "StopLossFixed", "params": {"points": 0.008}, "inputs": {}},
+    {"id": "position_sizing", "type": "PositionSizingPct", "params": {"pct": 0.03}, "inputs": {}},
+    {"id": "bracket_order", "type": "BracketOrder", "params": {}, "inputs": {"entry_signal": ["entry_signal", "signal"], "exit_signal": ["entry_signal", "signal"], "stop_config": ["stop_loss", "stop_config"], "tp_config": ["take_profit", "tp_config"], "size_config": ["position_sizing", "size_config"]}},
+    {"id": "risk_manager", "type": "RiskManagerDaily", "params": {"max_loss_pct": 0.03, "max_profit_pct": 0.06, "max_trades": 3}, "inputs": {"orders": ["bracket_order", "orders"]}}
+  ],
+  "outputs": {"orders": ["risk_manager", "filtered_orders"]},
+  "metadata": {
+    "description": "Child of volume_filter. Aggressive momentum burst entry: short 10-period volume SMA, low ATR threshold (1.0), high RSI band (55-80), and 5:1 TP/SL ratio. Killed: too aggressive - overfit to training data, poor holdout performance with sign-flip between in-sample and out-of-sample.",
+    "author": "llm",
+    "generation": 2,
+    "parent_graph": "gap_go_volume_filter"
+  }
+}

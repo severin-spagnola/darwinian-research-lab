@@ -1,0 +1,31 @@
+{
+  "graph_id": "gap_go_rsi_refined",
+  "strategy_name": "Gap & Go RSI Refined Elite",
+  "validation_report": {
+    "strategy_id": "gap_go_rsi_refined",
+    "strategy_name": "Gap & Go RSI Refined Elite",
+    "timestamp": "2026-02-06T15:47:12.347291",
+    "train_metrics": {
+      "return_pct": 14.23,
+      "sharpe": 2.84,
+      "max_dd_pct": -3.21,
+      "trades": 64,
+      "win_rate": 0.61
+    },
+    "holdout_metrics": {
+      "return_pct": 9.87,
+      "sharpe": 2.41,
+      "max_dd_pct": -4.15,
+      "trades": 26,
+      "win_rate": 0.58
+    },
+    "stability": {"concentration_penalty": 0.01, "cliff_penalty": 0.0, "consistency_score": 0.92},
+    "fragility": {"return_dispersion": 0.12, "sign_flip_penalty": 0.0, "fragility_score": 0.14},
+    "penalties": {"concentration": 0.01, "cliff": 0.0, "sign_flip": 0.0, "fragility": 0.07},
+    "failure_labels": [],
+    "fitness": 2.31
+  },
+  "fitness": 2.31,
+  "decision": "survive",
+  "kill_reason": []
+}

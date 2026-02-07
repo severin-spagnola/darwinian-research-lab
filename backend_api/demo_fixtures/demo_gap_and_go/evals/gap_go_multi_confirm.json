@@ -1,0 +1,31 @@
+{
+  "graph_id": "gap_go_multi_confirm",
+  "strategy_name": "Gap & Go Multi-Timeframe Confirmation",
+  "validation_report": {
+    "strategy_id": "gap_go_multi_confirm",
+    "strategy_name": "Gap & Go Multi-Timeframe Confirmation",
+    "timestamp": "2026-02-06T15:47:13.461792",
+    "train_metrics": {
+      "return_pct": 11.74,
+      "sharpe": 2.37,
+      "max_dd_pct": -3.89,
+      "trades": 56,
+      "win_rate": 0.57
+    },
+    "holdout_metrics": {
+      "return_pct": 7.42,
+      "sharpe": 2.08,
+      "max_dd_pct": -4.61,
+      "trades": 21,
+      "win_rate": 0.52
+    },
+    "stability": {"concentration_penalty": 0.02, "cliff_penalty": 0.01, "consistency_score": 0.87},
+    "fragility": {"return_dispersion": 0.15, "sign_flip_penalty": 0.0, "fragility_score": 0.18},
+    "penalties": {"concentration": 0.02, "cliff": 0.01, "sign_flip": 0.0, "fragility": 0.09},
+    "failure_labels": [],
+    "fitness": 1.95
+  },
+  "fitness": 1.95,
+  "decision": "survive",
+  "kill_reason": []
+}

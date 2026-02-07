@@ -1,27 +1,48 @@
 {
   "run_id": "demo_gap_and_go",
   "timestamp": "2026-02-06T15:47:15.617653",
-  "total_evaluations": 1,
+  "total_evaluations": 8,
   "top_strategies": [
-    {
-      "graph_id": "gap_and_go_momentum",
-      "fitness": 1.342,
-      "decision": "survive"
-    }
+    {"graph_id": "gap_go_rsi_refined", "fitness": 2.31, "decision": "survive"},
+    {"graph_id": "gap_go_multi_confirm", "fitness": 1.95, "decision": "survive"},
+    {"graph_id": "gap_go_wider_gap", "fitness": 1.82, "decision": "survive"}
   ],
-  "kill_stats": {},
+  "kill_stats": {"fitness_below_threshold": 2},
   "generation_stats": [
     {
-      "total": 0,
-      "survivors": 0,
+      "total": 1,
+      "survivors": 1,
       "killed": 0,
-      "survivor_rate": 0.0,
-      "best_fitness": 0.0,
-      "mean_fitness": 0.0,
+      "survivor_rate": 1.0,
+      "best_fitness": 1.34,
+      "mean_fitness": 1.34,
+      "generation": 0,
+      "survivor_floor_triggered": false,
+      "rescue_from_best_dead_triggered": false
+    },
+    {
+      "total": 3,
+      "survivors": 2,
+      "killed": 1,
+      "survivor_rate": 0.67,
+      "best_fitness": 1.82,
+      "mean_fitness": 1.14,
       "generation": 1,
+      "survivor_floor_triggered": false,
+      "rescue_from_best_dead_triggered": false
+    },
+    {
+      "total": 4,
+      "survivors": 3,
+      "killed": 1,
+      "survivor_rate": 0.75,
+      "best_fitness": 2.31,
+      "mean_fitness": 1.71,
+      "generation": 2,
       "survivor_floor_triggered": false,
       "rescue_from_best_dead_triggered": false
     }
   ],
-  "best_fitness": 1.3418472605119618
+  "best_fitness": 2.31,
+  "best_strategy": {"graph_id": "gap_go_rsi_refined", "fitness": 2.31}
 }

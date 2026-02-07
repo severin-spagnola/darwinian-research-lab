@@ -1,0 +1,31 @@
+{
+  "graph_id": "gap_go_momentum_burst",
+  "strategy_name": "Gap & Go Momentum Burst Entry",
+  "validation_report": {
+    "strategy_id": "gap_go_momentum_burst",
+    "strategy_name": "Gap & Go Momentum Burst Entry",
+    "timestamp": "2026-02-06T15:47:13.094528",
+    "train_metrics": {
+      "return_pct": 11.56,
+      "sharpe": 1.87,
+      "max_dd_pct": -8.94,
+      "trades": 118,
+      "win_rate": 0.42
+    },
+    "holdout_metrics": {
+      "return_pct": -2.83,
+      "sharpe": -0.34,
+      "max_dd_pct": -12.67,
+      "trades": 47,
+      "win_rate": 0.32
+    },
+    "stability": {"concentration_penalty": 0.22, "cliff_penalty": 0.12, "consistency_score": 0.38},
+    "fragility": {"return_dispersion": 0.43, "sign_flip_penalty": 0.40, "fragility_score": 0.68},
+    "penalties": {"concentration": 0.22, "cliff": 0.12, "sign_flip": 0.40, "fragility": 0.34},
+    "failure_labels": ["low_trade_count", "poor_holdout"],
+    "fitness": 0.92
+  },
+  "fitness": 0.92,
+  "decision": "kill",
+  "kill_reason": ["fitness_below_threshold"]
+}
